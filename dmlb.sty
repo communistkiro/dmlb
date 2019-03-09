@@ -9,7 +9,6 @@
       xparse,
       etoolbox,
       microtype,
-      calc,
       xstring,
       longtable,
       array,
@@ -241,17 +240,19 @@
 
 \NewDocumentCommand \dmlb@rowlabel { m } {\refstepcounter{dmlb@dateLabel}\label{#1}}
 
-\NewDocumentCommand \dmlb@ddate { } {% INCREMENTS DATE, ROW LABEL, PDF BOOKMARK, PRINTS DATE IF ENOUGH ROOM
+\NewDocumentCommand {\dmlb@ddate} { } {% INCREMENTS DATE, ROW LABEL, PDF BOOKMARK, PRINTS DATE IF ENOUGH ROOM
    \small%
    \ifbool{dmlb@rcc}%
       {\color{oddRowTextColor}\global\boolfalse{dmlb@rcc}}%
       {\color{evenRowTextColor}\global\booltrue{dmlb@rcc}}%
-   \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>2 %DATE FORM
-      \multirow{-\dmlb@mrow}{*}%
-      {\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.%
-      \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+   \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>2% ROOM FOR DATE?
+      \ifnum\dmlb@mrow=1
+         \StrGobbleRight{\the\dimexpr(\dmlb@potato pt/2-1pt)\relax}{2}[\DICK]%
+         \multirow{-\DICK}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+      \else
+         \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+      \fi
    \fi
-   %
    \ifnum\theday=31
       \ifnum\themonth=12
          \stepcounter{year}\stepcounter{month}%
@@ -323,10 +324,13 @@
    \ifbool{dmlb@rcc}%
       {\color{oddRowTextColor}}%
       {\color{evenRowTextColor}}%
-   \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>2
-      \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{%
-      \TwoDigits{\theday}.\TwoDigits{\themonth}.%
-      \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+   \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>2% ROOM FOR DATE?
+      \ifnum\dmlb@mrow=1
+         \StrGobbleRight{\the\dimexpr(\dmlb@potato pt/2-1pt)\relax}{2}[\DICK]%
+         \multirow{-\DICK}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+      \else
+         \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 \syear\fi}}%
+      \fi
    \fi
    \global\dmlb@mrow 0\relax%
    &%
@@ -411,12 +415,12 @@
       \ifnum\therow=\maxrows
          \setcounter{row}{0}%
          \IfBooleanTF{#8}%
-            {\dmlb@QQ[\dmlb@ddate{}]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
-            {\dmlb@QQ[\dmlb@dddate{}]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% PAGEBROKEN TOP
+            {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+            {\dmlb@QQ[\dmlb@dddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% PAGEBROKEN TOP
          \pagebreak%
       \else
          \IfBooleanTF{#8}%
-            {\dmlb@QQ[\dmlb@ddate{}]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+            {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
             {\dmlb@QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
       \fi
    \fi
@@ -525,7 +529,7 @@
    \fi
 }
 
-\def\TwoDigits#1{\ifnum#1<10 0#1\else#1\fi}
+\newcommand*{\TwoDigits}[1]{\ifnum#1<10 0#1\else#1\fi}
 
 \def\dmlb@sDate{\theyear-\TwoDigits{\themonth} }
 
