@@ -1,0 +1,543 @@
+% \NeedsTeXFormat{LaTeX2e}
+% \ProvidesPackage{dmlbl3}[a tryhard logbook for diabetes]
+\RequirePackage{expl3}
+\RequirePackage{xparse}
+\ProvidesExplPackage{dmlbl3}{}{}{a tryhard logbook for diabetes}
+
+
+
+% PACKAGAES ===========================
+        % \ExplSyntaxOn
+    \RequirePackage[table]{xcolor}
+    \RequirePackage{caption}
+        \DeclareCaptionFormat{myformat}{{\rmfamily\small\textsc{#1}#2{#3}}}
+        \captionsetup{format={myformat},labelsep={period}}
+    \RequirePackage{
+        xparse,
+        microtype,
+        calc,
+        rotating,
+        array,
+        longtable,
+        multicol,
+        multirow,
+    }
+    \RequirePackage[
+        unicode=true,
+        bookmarks=true,         % show bookmarks bar?
+        bookmarksopen=false,    % expand bookmark tree
+        unicode=true,          % non-Latin characters in Acrobat’s bookmarks
+        pdftoolbar=true,        % show Acrobat’s toolbar?
+        pdfmenubar=true,        % show Acrobat’s menu?
+        pdffitwindow=false,     % window fit to page when opened
+        pdfstartview={FitH},    % fits the width of the page to the window
+        pdftitle={Diabetes Journal},    % title
+        pdfauthor={},     % author
+        pdfnewwindow=true,      % links in new PDF window
+        colorlinks=false,       % false: boxed links; true: colored links
+        linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+        citecolor=green,        % color of links to bibliography
+        filecolor=magenta,      % color of file links
+        urlcolor=cyan,          % color of external links
+        % hidelinks=false
+        ]{hyperref}
+    \RequirePackage{fancyhdr}
+        \pagestyle{fancy}
+        \lhead{Diabetes Logbook}
+        \rhead{p.~\thepage}
+        \cfoot{}
+        \renewcommand{\headrulewidth}{0.8pt}
+        \renewcommand{\footrulewidth}{0.8pt}
+    \RequirePackage{bookmark}
+    \RequirePackage{silence}
+        \WarningsOff
+% PACKAGE OPTIONS =====================
+    % \sys_if_engine_pdftex:T {
+    % }
+    
+    \sys_if_engine_xetex:T {
+        \RequirePackage{polyglossia}
+            \setdefaultlanguage{english}
+        \RequirePackage{fontspec}
+            \setmainfont{XCharter}[Ligatures=TeX]
+            % \setmonofont{Century Gothic}[SmallCapsFont={TeX Gyre Adventor:+smcp}, Ligatures=TeX]
+            \setmonofont{Century Gothic}[SmallCapsFont={Arial}, Ligatures=TeX]
+    }
+
+    \DeclareOption{gray}{%
+        % ROWS
+        \providecolor{oddRowColor}{gray}{0.80}
+        \providecolor{evenRowColor}{gray}{1}
+        % TEXT
+        \providecolor{evenRowTextColor}{gray}{0} 
+        \providecolor{oddRowTextColor}{gray}{0}
+        % LINES
+        \providecolor{tableColor}{gray}{0}
+        % FANCYHDR HEADER AND FOOTER
+        \providecolor{headerColor}{gray}{0.15}
+    }
+
+    \DeclareOption{graph}{%
+        \AtEndPreamble{%
+            \usepackage{
+                pgf,
+                pgfplots,
+                pgfplotstable,
+            }
+            \usepgfplotslibrary{dateplot}% ,groupplots
+            \pgfplotsset{%
+                compat=1.16,% 
+                % group style={group size=1 by 1},
+                width=\dicklength,% 
+                height=\nutradius,% 
+                grid=both,%
+                every major grid/.append style={line width=.6pt},%
+                every minor grid/.append style={line width=.4pt},%
+                %
+                enlarge y limits=auto,%
+                enlarge x limits=0.015,%
+                % NONUNIFORM DISTANCES CHOSEN TO HIGHLIGHT LOW-OPTIMAL-HIGH
+                colormap={mycm}{%
+                    color(1.3)=(blue!70), color(2.5)=(teal!70),%
+                    color(4.5)=(green), color(7)=(yellow),%
+                    color(10)=(red), color(23)=(magenta)},%
+                my style/.style={font=\footnotesize},%
+                date coordinates in=x,%
+                minor x tick num=1,%                
+                y coord trafo/.code={\pgfmathparse{#1-(\mya-1)/\mya*(#1-\myb)*(#1>\myb)}},
+                y coord inf trafo/.code={\pgfmathparse{#1+(\mya-1)*(#1-\myb)*(#1>\myb)}},  
+                ymin=1,%
+                % extra y ticks={10,11,12,13,14,15,16,17},% extra grid lines or just increased tick distance?
+                yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},%  
+                % yticklabel={\pgfmathparse{int(\tick)}% which ticks show have a gridline but no number (overlapping)
+                    % \ifnum\pgfmathresult=10          
+                    % \else
+                    % \ifnum\pgfmathresult=11
+                    % \else
+                    % \ifnum\pgfmathresult=12
+                    % \else
+                    % \ifnum\pgfmathresult=13
+                    % \else
+                    % \ifnum\pgfmathresult=14
+                    % \else
+                    % \ifnum\pgfmathresult=15
+                    % \else
+                    % \ifnum\pgfmathresult=16
+                    % \else
+                    % \ifnum\pgfmathresult=17
+                   %  \else
+                % \pgfmathprintnumber{\tick}
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                   %  \fi
+                % },
+                ytick distance=1,%
+                table/col sep=comma,%
+                xticklabel={\day.\month.},%
+                x tick label style={%
+                    rotate=38,%
+                    anchor=east,%
+                    },
+                xlabel style={
+                    % rotate=90,% when rotated x/y shifts behave differently
+                    font=\normalsize,
+                    xshift={\dimexpr\dicklength/2\relax},%horiz
+                    yshift={\dimexpr\nutradius*5/6\relax},%vert
+                    },
+            }%
+            \usetikzlibrary{external}%
+            \tikzexternalize[
+                prefix=\myRelPath,
+                verbose=false,
+            ]%
+        }%
+        \AtEndDocument{\Grrraph:}
+    }
+
+    \ExecuteOptions{gray}
+    \ProcessOptions\relax
+% COUNTERS ============================
+    % SWITCHES FOR ROW/DATE BG AND TEXT COLORS
+    \bool_new:N \g__dmlb_rcc_bool
+    \bool_new:N \g__dmlb_rc_bool
+    % LONGTABLEROW FOR HYPERREF TO LABEL ROWS
+    \newcounter{ltrow}
+    % MULTIROW LENGTH AND PAGE ROWCOUND
+    \newcount\g__dmlb_mrow_int
+    \newcounter{row}
+    % CURRENT ROW TEXTHEIGHTS
+    \newcount\g__dmlb_potato_int 
+    % DATE COUNTERS
+    \newcounter{year}
+    \newcounter{syear}
+    \newcounter{month}[year]
+    \newcounter{day}[month]
+    % LEAP YEAR MONITOR
+    \int_new:N \g__dmlb_trapsaregay_int
+    % DATA SWITCHES/COUNTERS
+    \newcounter{dataSet}
+    \bool_new:N \g__dmlb_openDataFile_bool
+    \bool_new:N \g__dmlb_readPeriod_bool
+    \bool_new:N \g__dmlb_figaro_bool
+% COMMANDS ============================
+% \cs_new:Npn \rowlabel:n #1 {\refstepcounter{ltrow}\label{#1}}
+\NewDocumentCommand \rowlabel { m } {\refstepcounter{ltrow}\label{#1}}
+
+\cs_new:Nn \ddate: {% calls date, then increments
+    \small%
+    \bool_if:nTF \g__dmlb_rcc_bool% DATE TEXT COLOR
+    {\color{oddRowTextColor}\bool_gset_false:N \g__dmlb_rcc_bool}%
+    {\color{evenRowTextColor}\bool_gset_true:N \g__dmlb_rcc_bool}%
+    \if_int_compare:w \int_eval{\g__dmlb_mrow_int+\g__dmlb_potato_int-1}>2
+        \multirow{-\g__dmlb_mrow_int}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\if_int_compare:w \int_eval:n{\g__dmlb_mrow_int+\g__dmlb_potato_int-1}>4 \thesyear\fi:}}%
+    \fi:
+    %
+    \if_int_compare:w \theday=31
+        \if_int_compare:w \themonth=12
+            \stepcounter{year}\stepcounter{syear}\stepcounter{month}%
+            \if_int_compare:w \g__dmlb_trapsaregay_int=0
+                \global\advance\g__dmlb_trapsaregay_int -4\relax
+            \fi:
+            \global\advance\g__dmlb_trapsaregay_int 1\relax
+            \rowlabel{\g__dmlb_yymm_tl}%
+            \pdfbookmark{\theyear}{\g__dmlb_yymm_tl}%
+        \else:% NOT YEAR STEP REQUIRED
+            \stepcounter{month}%
+            \rowlabel{\g__dmlb_yymm_tl}%
+        \fi:
+        \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+    \else:% NOT 31
+        \if_int_compare:w \theday=30
+            \if_int_compare:w \themonth=4
+                \stepcounter{month}%
+                \rowlabel{\g__dmlb_yymm_tl}%
+                \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+            \else:
+                \if_int_compare:w \themonth=6
+                    \stepcounter{month}%
+                    \rowlabel{\g__dmlb_yymm_tl}%
+                    \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+                \else:
+                    \if_int_compare:w \themonth=9
+                        \stepcounter{month}%
+                        \rowlabel{\g__dmlb_yymm_tl}%
+                        \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+                    \else:
+                        \if_int_compare:w \themonth=11
+                            \stepcounter{month}%
+                            \rowlabel{\g__dmlb_yymm_tl}%
+                            \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+                        \fi:
+                    \fi:
+                \fi:
+            \fi:
+        \else:% NOT 30, IS IT FEB?
+            \if_int_compare:w \themonth=2
+                \if_int_compare:w \g__dmlb_trapsaregay_int=0
+                    \if_int_compare:w \theday=29
+                        \stepcounter{month}%
+                        \rowlabel{\g__dmlb_yymm_tl}%
+                        \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+                    \fi:
+                \else:
+                    \if_int_compare:w \theday=28
+                        \stepcounter{month}%
+                        \rowlabel{\g__dmlb_yymm_tl}%
+                        \pdfbookmark[1]{\monthname{}}{\g__dmlb_yymm_tl}%
+                    \fi:
+                \fi:
+            \fi:
+        \fi:
+    \fi:
+    \stepcounter{day}% DAY GETS STEPED NO MATTER WHAT
+    % \str_gset:Nn \g_TDymd_str {\theyear-\TwoDigits{\themonth}-\TwoDigits{\theday}}% 
+    \tl_gset:Nn \g__dmlb_yymmdd_tl {\use:x{\theyear-\TwoDigits{\themonth}-\TwoDigits{\theday}}}% fixme
+    \rowlabel{g__dmlb_yymmdd_tl}%
+    \global\g__dmlb_mrow_int 0\relax
+    &%
+}
+
+\cs_new:Nn \__dmlb_dddate: {% CALLS DATE, DOESN'T INCREMENT, FOR USE ON TOP PART OF PAGEBROKEN DAY
+    \small%
+    \bool_if:nTF \g__dmlb_rcc_bool
+    {\color{oddRowTextColor}}%
+    {\color{evenRowTextColor}}%
+    \if_int_compare:w\int_eval:n{\g__dmlb_mrow_int+\g__dmlb_potato_int-1}\relax>2
+        \multirow{-\g__dmlb_mrow_int}{*}{\rotatebox{90}{\TwoDigits{\theday}.\TwoDigits{\themonth}.\if_int_compare:w\int_eval:n(\g__dmlb_mrow_int+\g__dmlb_potato_int-1)>4 \thesyear\fi:}}%
+    \fi:
+        \global\g__dmlb_mrow_int 0\relax
+    &%
+} 
+
+\cs_new:Npn \__dmlb_checkmedaddy #1 {%
+    \bool_if:nF \g__dmlb_figaro_bool
+    {%
+        \bool_if:nTF \g__dmlb_readPeriod_bool
+        {%
+            \bool_if:nTF \g__dmlb_openDataFile_bool
+            {%
+                \ifx\g__dmlb_yymmdd_tl\fDate
+                    \immediate\closeout\data
+                    \bool_gset_false:N \g__dmlb_openDataFile_bool
+                    \bool_gset_false:N \g__dmlb_readPeriod_bool
+                \else
+                    {#1}%
+                \fi
+            }%
+            {%
+                \ifx\g__dmlb_yymmdd_tl\iDate
+                    \stepcounter{dataSet}
+                    \immediate\openout\data=\myRelPath\thedataSet.dat
+                    \bool_gset_true:N \g__dmlb_openDataFile_bool%
+                    {#1}%
+                \fi
+            }%
+        }%
+        {%
+            \global\read\periods to \iDate
+            \ifx\iDate\endpar
+                \bool_gset_true:N \g__dmlb_figaro_bool 
+                \closein\periods
+            \else
+                \global\read\periods to \fDate
+                \bool_gset_true:N \readPeriod
+                \__dmlb_checkmedaddy{#1}%
+            \fi
+        }%
+    }%
+}
+
+\cs_new:Npn \__dmlb_QQ #1#2#3#4#5#6#7#8 {%
+    \str_if_eq:NNTF {&}{#1}
+    {\global\advance\g__dmlb_mrow_int \g__dmlb_potato_int\relax}
+    {\global\advance\g__dmlb_mrow_int 1\relax}
+    \__dmlb_checkmedaddy{%
+        \tl_if_blank:nF {#3}
+        {\immediate\write\data{\g__dmlb_yymmdd_tl #2, #3}}%
+    }%
+    % ===================================================
+        % \setbox0\vbox{\hsize=\mym{}
+        % #8\par%
+        % \xdef\zzz{\the\numexpr\prevgraf+1\relax}}
+        % % \xdef\zzz{\the\prevgraf\relax}}
+        % \addtocounter{row}{\zzz}
+        % \ifstrequal{#1}{&}%
+        %   {\addtocounter{g__dmlb_mrow_int}{\zzz}}%
+        %   {\stepcounter{g__dmlb_mrow_int}}%
+    \bool_if:nTF \g__dmlb_rc_bool%
+    {\rowstyle{\color{evenRowTextColor}}\bool_gset_false \g__dmlb_rc_bool}%
+    {\rowstyle{\color{oddRowTextColor}}\bool_gset_true \g__dmlb_rc_bool}%
+    \bool_if:nTF \g__dmlb_rcc_bool%
+    {\cellcolor{oddRowColor}}%
+    {\cellcolor{evenRowColor}}%
+    #1 %  date
+    #2& % time
+    #3& % blood glucose
+    #4& % insulin
+    #5& % carbohydrates
+    #6& % protein
+    #7& % fat
+    #8 %  remarks
+    \color{tableColor}%
+    \\%
+}
+
+% \cs_new:Npn \QQQ #1#2#3#4#5#6#7#8 {%
+\NewDocumentCommand \QQQ { O m m m m m m m } {% fixme name
+    \tl_if_blank:nTF {#8}%
+    {\global\g__dmlb_potato_int 1\relax}%
+    {%
+        \setbox0=\hbox{#8}
+        \global\g__dmlb_potato_int \dimexpr(\wd0)\relax\relax
+        \divide\g__dmlb_potato_int \g__dmlb_sofa_int\relax
+        \global\advance\g__dmlb_potato_int 1\relax
+    }%
+    \addtocounter{row}{\g__dmlb_potato_int}%
+    \if_int_compare:w \therow>\maxrows
+        \setcounter{row}{\g__dmlb_potato_int}%
+        \global\g__dmlb_mrow_int 0\relax
+        % \tl_if_blank:nTF {#1}%
+        % {\__dmlb_QQ{#2}{#3}{#4}{#5}{#6}{#7}{#8}}% PAGEBROKEN BOTTOM
+        % {\__dmlb_QQ[#1]{#2}{#3}{#4}{#5}{#6}{#7}{#8}}%
+        \__dmlb_QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8}%
+    \else:
+        \if_int_compare:w \therow=\maxrows
+            \setcounter{row}{0}% 
+            \tl_if_blank:nTF {#1}
+            {\__dmlb_QQ{\__dmlb_dddate:}{#2}{#3}{#4}{#5}{#6}{#7}{#8}\pagebreak}% PAGEBROKEN TOP  
+            {\__dmlb_QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8}\pagebreak}%
+        \else:
+            % \tl_if_blank:nTF {#1}% NOT LAST ROW OR SELF-CALLED
+            % {\__dmlb_QQ{#2}{#3}{#4}{#5}{#6}{#7}{#8}}%
+            % {\__dmlb_QQ[#1]{#2}{#3}{#4}{#5}{#6}{#7}{#8}}%
+            \__dmlb_QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}{#8}%
+        \fi:
+    \fi:
+}%
+
+% \def\graph#1#2{%}
+\cs_new:Npn \graph #1#2 {%
+    \immediate\write\periods{#1}% iDate
+    \immediate\write\periods{#2}% fDate
+}
+
+\cs_new:Nn \Grrraph: {% read i/f dates, (fixme: options?) and graphs em
+    \newread\periods
+    \setcounter{dataSet}{0}
+    \openin\periods=\myRelPath\thedataSet.dat
+    % read periods at least once
+    \read\periods to \iDate
+    \ifx\iDate\endpar
+        % empty 0.dat empty, no \graph instances
+    \else
+        \stepcounter{dataSet}%
+        \__graphmedaddy:%
+    \fi
+        \closein\periods
+}
+
+% \NewDocumentCommand \__graphmedaddy { } {%}
+\cs_new:Nn \__graphmedaddy: {%}
+    \IfFileExists{\myRelPath\thedataSet.dat}% start@ 1.dat
+    {%
+        % first \iD@te read by \Grrrraph
+        \StrGobbleRight{\iD@te}{1}[\iD@te]% FIXME
+        \global\read\periods to \fD@te% FIXME
+        \StrGobbleRight{\fD@te}{1}[\fD@te]% FIXME%
+
+        \tikzsetnextfilename{\thedataSet}%
+        \begin{tikzpicture}%
+        \begin{axis}[%
+            xmin=\iD@te{} 05:00,%
+            xmax=\fD@te{} 05:00,%
+            xlabel={\rotatebox{90}{\iD@te{}---\fD@te{}}},% for external graphics
+            % xlabel={\rotatebox{90}{\hyperref[\iD@te]{\iD@te}---\hyperref[\fD@te]{\fD@te}}},% for internal one
+        ]
+            \addplot [only marks, scatter] table [header=false, x index=0,y index=1] {\myRelPath\thedataSet.dat};%
+        % ]%
+        \end{axis}%
+        \end{tikzpicture}%
+
+        \global\read\periods to \iD@te
+
+        \ifx\endpar\iD@te
+            % DONT REPEAT
+        \else
+            \stepcounter{dataSet}%
+            \__graphmedaddy{}%
+        \fi
+    }%
+    {}%
+}
+
+\NewDocumentCommand \monthname { } {%}
+    \ifnum\themonth<7
+        \ifnum\themonth=1
+            January%
+        \else
+            \ifnum\themonth=2
+                February%
+            \else
+                \ifnum\themonth=3
+                    March%
+                \else
+                    \ifnum\themonth=4
+                        April%
+                    \else
+                        \ifnum\themonth=5
+                            May%
+                        \else
+                            \ifnum\themonth=6
+                                June%
+                            \fi
+                        \fi
+                    \fi
+                \fi
+            \fi
+        \fi
+    \else
+        \ifnum\themonth=7
+            July%
+        \else
+            \ifnum\themonth=8
+                August%
+            \else
+                \ifnum\themonth=9
+                    September%
+                \else
+                    \ifnum\themonth=10
+                        October%
+                    \else
+                        \ifnum\themonth=11
+                            November%
+                        \else
+                            December%
+                        \fi
+                    \fi
+                \fi
+            \fi
+        \fi
+    \fi
+}
+
+
+% \cs_new:Npn \TwoDigits #1 {\if_int_compare:w #1<10 0#1\else#1\fi}
+% \str_gset:Nn \g__dmlb_yymm_tl {\theyear-\TwoDigits{\themonth}}
+\NewDocumentCommand \TwoDigits { m } {\ifnum#1<10 0#1\else#1\fi}
+
+\tl_gset:Nn \g__dmlb_yymm_tl {\theyear-\TwoDigits{\themonth}}
+
+\def\endpar{\par}
+
+    \ExplSyntaxOff
+
+% APPLYING TEXT COLOR FROM CELL TO CELL WITHIN ROW
+    \newcommand*{\@rowstyle}{}
+
+    \newcommand*{\rowstyle}[1]{% sets the style of the next row
+    \gdef\@rowstyle{#1}%
+    \@rowstyle\ignorespaces%
+    }
+
+    \newcolumntype{=}{% resets the row style
+    >{\gdef\@rowstyle{}}%
+    }
+
+    \newcolumntype{+}{% adds the current row style to the next column
+    >{\@rowstyle}%
+    }
+
+
+\NewDocumentCommand \changestrut { } {% VERTICAL ALIGNMENT OF TEXT WITHIN TABLE ROWS- EQUAL HEIGHT TO TOP AND BOTTOM \HLINE FROM A CAPITAL; TO BE USED ON ALL GLYPHS WITHOUT DESCENDERS OF USED FONT; thanks to Marcel Krüger from tex.stackexchange.com FIXME l3?
+    \setbox\strutbox\hbox{%
+    \setbox0\hbox{ABCDEFGHJIKLMNOPQRSTUVWXYZabcdefhiklmnorstuvwxz.?!;:-1234567890}% 
+    \skip0\dimexpr\baselineskip-\ht0-\dp0\relax%
+    \vrule height\glueexpr\ht0+.5\skip0\relax depth\glueexpr\dp0+.5\skip0\relax width0pt%
+    }%
+}%
+% REST ================================
+\AtBeginDocument{%
+    \setlength\parindent{0pt}%
+    \rowcolors{2}{oddRowColor}{evenRowColor}%
+    \color{tableColor}% table lines and top row
+    \changestrut{}%
+    \ExplSyntaxOn
+        \int_gset:Nn \g__dmlb_trapsaregay_int {\int_mod:nn {\theyear} {4}}
+        \int_const:Nn \c__dmlb_sofa_int {\dim_to_decimal_in_sp:{\mym}}
+    \ExplSyntaxOff
+    \addtocounter{row}{1}
+}
+
+
+\endinput
+
+
+TODO
+- fixme's
+- l3file- steamline file reading and writing, less checking
+- 

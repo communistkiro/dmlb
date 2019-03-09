@@ -1,0 +1,43 @@
+\documentclass[a4paper]{article}
+\usepackage[
+    driver=xetex, 
+    top=1.5cm, 
+    bottom=0.6cm, 
+    left=1cm, 
+    right=1cm,
+    footskip=0pt,
+    headsep=10pt,
+    % showframe,
+    ]{geometry}
+\usepackage[graph]{dmlb}
+\nonstopmode%
+% CONSTS ==============================
+    \chardef\maxrows=79% max rows/page- depends on geometry, font, fontsize etc.; header row not inc.
+    \edef\mym{11cm}% in cm, the width of the m column with unit, because otherwise table doesn't accept `\myd cm`
+    \edef\myRelPath{./graphs/}% relative path for auxiliary files; preferably not same as .tex file folder
+    \edef\dicklength{19cm}% must be enough to fit the dimensions, in this case (somewhat) below 210-right-left=200mm
+    \edef\nutradius{6.2cm}% (297-top-bottom-\headsep)machiavellian/5=58.4mm this however somehow contain the subgraph sep?
+    \edef\mya{4}% y-axis scale compression factor after \myb
+    % \def\mya{\the\pgfmathparse{(\myq-1)/\myq}}
+    \edef\myb{9}% begin y-axis tick scaling from \myb
+% COLORS ==============================
+    % comment out section for default color scheme
+    % ROWS
+    \definecolor{oddRowColor}{RGB}{55,24,34}
+    \definecolor{evenRowColor}{RGB}{28,19,23}
+    % TEXT
+    \colorlet{oddRowTextColor}{-oddRowColor}
+    \colorlet{evenRowTextColor}{-evenRowColor}
+    % TABLE
+    \definecolor{tableColor}{RGB}{150,232,248}
+    % HEADER/FOOTER
+    \colorlet{headerColor}{green!65}
+    % PAGE BACKGROUND
+    \definecolor{pageBG}{RGB}{29,25,32}
+    \pagecolor{pageBG}
+    % CAPTION TEXT
+    \DeclareCaptionFont{cc}{\color{white}} 
+    \captionsetup{font+={cc}}
+\begin{document}
+\end{document}
+xelatex -shell-escape graphmedaddy.tex
