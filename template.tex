@@ -9,10 +9,9 @@
     headsep=10pt,
     % showframe,
     ]{geometry}
-% \usepackage[graph]{dmlb}
-\usepackage{dmlb}
+\usepackage[graph]{dmlb}
+% \usepackage{dmlb}
 % CONSTS ==============================
-    \chardef\maxrows=79% MAX ROWS/PAGE- DEPENDS ON GEOMETRY, FONT, FONTSIZE ETC.; HEADER ROW NOT INC.
     \edef\mym{11cm}% IN CM, THE WIDTH OF THE M COLUMN WITH UNIT, BECAUSE OTHERWISE TABLE DOESN'T ACCEPT `\MYD CM`
     \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES; PREFERABLY NOT SAME AS .TEX FILE FOLDER
     \edef\dicklength{19cm}% MUST BE ENOUGH TO FIT THE DIMENSIONS, IN THIS CASE (SOMEWHAT) BELOW 210-RIGHT-LEFT=200MM
@@ -28,24 +27,26 @@
     \colorlet{oddRowTextColor}{-oddRowColor}
     \colorlet{evenRowTextColor}{-evenRowColor}
     % TABLE
-    \definecolor{tableColor}{RGB}{150,232,248}
+    \definecolor{tableColor}{RGB}{180,232,248}% 150,232,248
+    % \colorlet{tableColor}{pink}
     % HEADER/FOOTER
-    \colorlet{headerColor}{green!65}
+    \colorlet{headerColor}{green!55}
     % PAGE BACKGROUND
     \definecolor{pageBG}{RGB}{29,25,32}
     \pagecolor{pageBG}
     % CAPTION TEXT
-    \DeclareCaptionFormat{myformat}{{\rmfamily\small\textsc{#1}#2{#3}}}
-    \DeclareCaptionFont{cc}{\color{white}} 
+    % \DeclareCaptionFormat{myformat}{{\rmfamily\small\textsc{#1}#2{#3}}}% default
+    \DeclareCaptionFont{cc}{\color{pink}}
     \captionsetup{format={myformat},labelsep={period},font+={cc}}
 \begin{document}
-    \addtocounter{row}{1}% ACCOUNT FOR LONGER FIRST HEADER
+    \global\advance\row 1\relax% ACCOUNT FOR LONGER FIRST CAPTION
 % TIME/DATE BG DATA COLECTION IN MONTH CHUNKS
     \immediate\newwrite\periods
     \immediate\openout\periods=\myRelPath0.dat
-    % \tograph{2000-01-01}{2000-01-26}% SAVE DATA FROM FIRST DATE 00:00 TO SECOD DATE 00:00;
-    % \tograph{2000-01-26}{2000-02-20}% I.E., INPUTING "2000-02-21", WOULD CAUSE IT TO COLLECT UNTIL END OF DOC
-    % \tograph{2019-02-01}{2019-02-23}% THEREBY RUINING THAT .DAT, AND THE POSSIBILITY FOR NEW .DATS TO GET CREATED
+    % SAVES DATA FROM FIRST DATE 00:00 TO SECOD DATE 00:00, I.E., INPUTTING A NON-EXTISTENT DATE WOULD CAUSE IT TO COLLECT UNTIL END OF DOC THEREBY RUINING CURRENT .DAT AND NOT STARTING NEW ONES/OVERWRITING OLD ONES
+    \tograph{1999-12-21}{2000-01-26}%
+    \tograph{2000-01-26}{2000-02-12}%
+    \tograph{2016-02-02}{2016-04-05}%
     % \tograph{2236-12-24}{2237-01-24}%
     % \tograph{2237-01-24}{2237-02-12}%
     % \tograph{2666-05-05}{2666-06-24}%
@@ -58,8 +59,8 @@
 \begin{longtable}{ =r +r | +r +r +r +r +r | +m{\mym} }%
     \hiderowcolors%
     % FIRST HEADER
-        \caption{%
-             Diabetes logbook: blood glucose (BG) given in millimolars mM, carbohydrates (CHO), protein (Pro), and fat in grams; Sanofi Apridra as fast-acting insulin analog (Ins) in international units IU.%
+        \caption*{%
+            Diabetes logbook: blood glucose (BG) given in millimolars mM, carbohydrates (CHO), protein (Pro), and fat in grams; Sanofi Apridra as fast-acting insulin analog (Ins) in international units IU.%
             }\\%
         \multicolumn{2}{c|}%
         {\small Time}&%
@@ -68,9 +69,9 @@
         {\small CHO}&% 
         {\small Pro}&%
         {\small Fat}&%
-        {\small Remarks} \\\hline\endfirsthead%
+        {\small Remarks}\\\hline\endfirsthead%
     % NORMAL HEADER
-        \caption{\emph{cont.}}\\% 
+        \caption*{\emph{cont.}}\\% 
         \multicolumn{2}{c|}%
         {\small Time}&%
         {\small BG}&%
@@ -82,10 +83,11 @@
     % FOOTER
         \hline\endfoot%
     \showrowcolors%
-\dmlbSetDate{2019}{2}{1}%
+\dmlbSetDate{1999}{12}{21}%
+\input{./QQ/TEST}% 2000 IS NOT A TRUE LEAP YEAR BECAUSE DIVISIBLE BY 400
+\dmlbSetDate{2016}{2}{1}%
 \input{./QQ/TEST}%
-\dmlbSetDate{3000}{10}{1}%
-% 01.02.19%
+% 01.02.19
     \QQQ{00:35}{ }{3}{5}{22}{45}{}%
     \QQQ{03:11}{6.6}{2}{ }{ }{ }{}%
     \QQQ{19:14}{ }{5}{x}{xx}{xx}{}%
@@ -93,7 +95,7 @@
     \QQQ{23:00}{ }{14}{25}{40}{100}{}*%
     \QQQ{01:41}{2.7}{ }{ }{ }{ }{}%
     \QQQ{03:48}{4.0}{ }{ }{ }{ }{}%
-% 02.02.19%
+% 02.02.19
     \QQQ{13:50}{15.8}{14}{ }{80}{80}{}%
     \QQQ{15:14}{10.0}{4}{5}{40}{90}{}%
     \QQQ{16:39}{3.5}{7}{13--}{23--}{55--}{}%
@@ -265,12 +267,9 @@
     \QQQ{14:28}{5.5}{ }{3.2}{44}{70}{}%
     \QQQ{15:48}{2.3}{ }{ }{ }{ }{}%
     \QQQ{18:37}{1.5}{ }{9}{ }{ }{}*%
-
-
 % \dmlbSetDate{1423}{12}{24}%
 % \input{./QQ/TEST}%
 % \dmlbSetDate{6}{5}{5}%
 % \input{./QQ/TEST}%
 \end{longtable}
-
 \end{document}
