@@ -1,10 +1,8 @@
 \documentclass[a4paper]{article}
 \usepackage[
-    driver=xetex, 
     top=1.5cm, 
     bottom=0.6cm, 
-    left=1cm, 
-    right=1cm,
+    hmargin=1cm,% FIXME multi-row single-entry date misaligned if greater
     footskip=0pt,
     headsep=10pt,
     % showframe,
@@ -27,8 +25,7 @@
     \colorlet{oddRowTextColor}{-oddRowColor}
     \colorlet{evenRowTextColor}{-evenRowColor}
     % TABLE
-    \definecolor{tableColor}{RGB}{180,232,248}% 150,232,248
-    % \colorlet{tableColor}{pink}
+    \definecolor{tableColor}{RGB}{180,232,252}
     % HEADER/FOOTER
     \colorlet{headerColor}{green!55}
     % PAGE BACKGROUND
@@ -39,14 +36,15 @@
     \DeclareCaptionFont{cc}{\color{pink}}
     \captionsetup{format={myformat},labelsep={period},font+={cc}}
 \begin{document}
-    \global\advance\row 1\relax% ACCOUNT FOR LONGER FIRST CAPTION
+   \global\advance\row 1\relax% ACCOUNT FOR LONGER FIRST HEADER
 % TIME/DATE BG DATA COLECTION IN MONTH CHUNKS
     \immediate\newwrite\periods
     \immediate\openout\periods=\myRelPath0.dat
-    % SAVES DATA FROM FIRST DATE 00:00 TO SECOD DATE 00:00, I.E., INPUTTING A NON-EXTISTENT DATE WOULD CAUSE IT TO COLLECT UNTIL END OF DOC THEREBY RUINING CURRENT .DAT AND NOT STARTING NEW ONES/OVERWRITING OLD ONES
+    % SAVES DATA FROM FIRST DATE 00:00 TO SECOND DATE 00:00, I.E., INPUTTING A NON-EXTISTENT DATE WOULD CAUSE IT TO COLLECT UNTIL END OF DOC THEREBY RUINING CURRENT .DAT AND NOT STARTING NEW ONES/OVERWRITING OLD ONES
     \tograph{1999-12-21}{2000-01-26}%
     \tograph{2000-01-26}{2000-02-12}%
-    \tograph{2016-02-02}{2016-04-05}%
+    \tograph{2016-02-02}{2016-03-10}%
+    \tograph{2016-03-10}{2016-04-05}%
     % \tograph{2236-12-24}{2237-01-24}%
     % \tograph{2237-01-24}{2237-02-12}%
     % \tograph{2666-05-05}{2666-06-24}%
@@ -55,11 +53,11 @@
     \immediate\newwrite\data
     %
     \newread\periods
-    \openin\periods=\myRelPath0.dat % open streaming so \QQ can read periods
+    \openin\periods=\myRelPath0.dat
 \begin{longtable}{ =r +r | +r +r +r +r +r | +m{\mym} }%
     \hiderowcolors%
     % FIRST HEADER
-        \caption*{%
+        \caption{%
             Diabetes logbook: blood glucose (BG) given in millimolars mM, carbohydrates (CHO), protein (Pro), and fat in grams; Sanofi Apridra as fast-acting insulin analog (Ins) in international units IU.%
             }\\%
         \multicolumn{2}{c|}%
@@ -71,7 +69,7 @@
         {\small Fat}&%
         {\small Remarks}\\\hline\endfirsthead%
     % NORMAL HEADER
-        \caption*{\emph{cont.}}\\% 
+        \caption{\emph{cont.}}\\% 
         \multicolumn{2}{c|}%
         {\small Time}&%
         {\small BG}&%
@@ -266,7 +264,7 @@
     \QQQ{13:41}{10.0}{9}{ }{ }{ }{}%
     \QQQ{14:28}{5.5}{ }{3.2}{44}{70}{}%
     \QQQ{15:48}{2.3}{ }{ }{ }{ }{}%
-    \QQQ{18:37}{1.5}{ }{9}{ }{ }{}*%
+    \QQQ{18:37}{1.5}{ }{9}{ }{ }{Hey.\hyperref[2000-01-07]{Niggers.}}*%
 % \dmlbSetDate{1423}{12}{24}%
 % \input{./QQ/TEST}%
 % \dmlbSetDate{6}{5}{5}%
