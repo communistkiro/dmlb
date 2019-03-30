@@ -1,9 +1,8 @@
 \documentclass[a4paper]{article}
 \usepackage[
-    driver=xetex, 
     top=1.5cm, 
     bottom=0.6cm, 
-    hmargin=1cm, 
+    hmargin=1cm,
     footskip=0pt,
     headsep=10pt,
     ]{geometry}
@@ -11,8 +10,6 @@
 \nonstopmode%
 % CONSTS ==============================
    \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES; PREFERABLY NOT SAME AS .TEX FILE FOLDER
-   \edef\dicklength{19cm}% MUST BE ENOUGH TO FIT THE DIMENSIONS, IN THIS CASE (SOMEWHAT) BELOW 210-RIGHT-LEFT=200MM
-   \edef\nutradius{6.2cm}% (297-TOP-BOTTOM-\HEADSEP)/5=58.4MM THIS HOWEVER SOMEHOW CONTAIN THE SUBGRAPH SEP? FIXME- DOES THIS GET SCALED DOWN?
    \edef\mya{4}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
    \edef\myb{9}% BEGIN Y-AXIS TICK SCALING FROM \MYB
 % COLORS ==============================
@@ -30,6 +27,8 @@
     % PAGE BACKGROUND
     \definecolor{pageBG}{RGB}{29,25,32}
     \pagecolor{pageBG}
+    % GRAPH CURVE AND GRID
+    \colorlet{curveColor}{pink}
 \begin{document}
 \end{document}
 xelatex -shell-escape graphmedaddy.tex

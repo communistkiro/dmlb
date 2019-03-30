@@ -2,11 +2,10 @@
 Initally a logbook for me, a person w/ type one diabetes mellitus, it evolved over time into a TeX project- making it prettier and/or easier to use, and currently I'd like to make it as simple as possible to use logbook for anybody, although the template and graphing things will be for T1DM.
 
 ## FIXME:
-1. migrate from tikz/pgf to matplotlib, or sth else;
+1. migrate from tikz/pgf to matplotlib, or sth else?;
 2. more graphing options, more customization options;
-3. optimize;
-4. make less bad;
-5. reduce overall user overhead;
+3. optimize and make less bad
+4. reduce user overhead;
 
 ## Usage
 1. To your desire customize: colors (default's black-white-grey); (for now) graph width/height; page geometry; auxiliary file destination.
