@@ -1,586 +1,629 @@
-\NeedsTeXFormat{LaTeX2e}[2018/03/21]
-\ProvidesPackage{dmlb}[a tryhard logbook for diabetes]
+\ProvidesPackage{dmlb}[2018/05/03 a tryhard logbook for diabetes]
+\NeedsTeXFormat{LaTeX2e}
 % PACKAGES  ===========================
-  \RequirePackage{
-    xparse,
-    etoolbox,
-    microtype,
-    xstring,
-    longtable,
-    array,
-    multicol,
-    multirow,
-    rotating,
-    caption,
-    fancyhdr,
-  }
-  \RequirePackage[table]{xcolor}
-  \RequirePackage[
-    unicode=true,
-    bookmarks=true,                 % show bookmarks bar?
-    bookmarksopen=false,            % expand bookmark tree
-    unicode=true,                   % non-Latin characters in pdfviewer's bookmarks
-    pdftoolbar=true,                % show pdfviewer's toolbar?
-    pdfmenubar=true,                % show pdfviewer's menu?
-    pdffitwindow=false,             % window fit to page when opened
-    pdfstartview={FitH},            % fits the width of the page to the window
-    pdftitle={Diabetes Logbook},    % title
-    pdfauthor={},                   % author
-    pdfnewwindow=true,              % links in new PDF window
-    colorlinks=false,               % false: boxed links; true: colored links
-    linkcolor=red,                  % color of internal links (change box color with linkbordercolor)
-    citecolor=green,                % color of links to bibliography
-    filecolor=magenta,              % color of file links
-    urlcolor=cyan,                  % color of external links
-    % hidelinks=false
-  ]{hyperref}
+   \RequirePackage{
+      xparse,
+      etoolbox,
+      microtype,
+      xstring,
+      longtable,
+      array,
+      multicol,
+      multirow,
+      rotating,
+      caption,
+      fancyhdr,
+   }
+   \RequirePackage[table]{xcolor}
+   \RequirePackage[
+      unicode=true,
+      bookmarks=true,                 % show bookmarks bar?
+      bookmarksopen=false,            % expand bookmark tree
+      unicode=true,                   % non-Latin characters in pdfviewer's bookmarks
+      pdftoolbar=true,                % show pdfviewer's toolbar?
+      pdfmenubar=true,                % show pdfviewer's menu?
+      pdffitwindow=false,             % window fit to page when opened
+      pdfstartview={FitH},            % fits the width of the page to the window
+      pdftitle={Diabetes Logbook},    % title
+      pdfauthor={},                   % author
+      pdfnewwindow=true,              % links in new PDF window
+      colorlinks=false,               % false: boxed links; true: colored links
+      linkcolor=red,                  % color of internal links (change box color with linkbordercolor)
+      citecolor=green,                % color of links to bibliography
+      filecolor=magenta,              % color of file links
+      urlcolor=cyan,                  % color of external links
+      % hidelinks=false
+   ]{hyperref}
 
-  \ExplSyntaxOn
-  \sys_if_engine_pdftex:T
-  {
-    \RequirePackage[english]{babel}
-    \renewcommand{\sfdefault}{pag}
-  }
-  \sys_if_engine_xetex:T
-  {
-    \RequirePackage{polyglossia}
-      \setdefaultlanguage{english}
-    \RequirePackage{fontspec}
-      \setmainfont{XCharter}[Ligatures=TeX]% XCharter, CrimsonPro     ...[Numbers=Lining,Numbers=Monospaced]?
-      \setsansfont{Century Gothic}[Ligatures=TeX,]% cabin
-  }
-  \ExplSyntaxOff
-% PACKAGE OPTIONS =====================
-  % FANCYHDR
-  \pagestyle{fancy}
-  \lhead{Diabetes Logbook}
-  \rhead{p.~\thepage}
-  \cfoot{}
-  \renewcommand{\headrulewidth}{0.8pt}
-  \renewcommand{\footrulewidth}{0.8pt}
-  % CAPTION
-  \DeclareCaptionFormat{myformat}{\rmfamily\small\textsc{#1}#2{#3}}
-  \captionsetup{format={myformat},labelsep={period}}
+   \usepackage{pgfplotstable}
+   \usepgfplotslibrary{dateplot}
 
-  \setlength{\parindent}{0\p@}% INDENTATION IS NOT AN OPTION
+   \ExplSyntaxOn
+   \sys_if_engine_pdftex:T
+   {
+      \RequirePackage[english]{babel}
+      \renewcommand{\sfdefault}{pag}
+   }
+   \sys_if_engine_xetex:T
+   {
+      \RequirePackage{polyglossia}
+         \setdefaultlanguage{english}
+      \RequirePackage{fontspec}
+         \setmainfont{XCharter}[Ligatures=TeX]% XCharter, CrimsonPro
+         \setsansfont{Century Gothic}[Ligatures=TeX,]% cabin
+   }
+   \ExplSyntaxOff
+% OPTIONS =============================
+   % FANCYHDR
+      \pagestyle{fancy}
+      \lhead{Diabetes Logbook}
+      \rhead{p.\,\thepage}
+      \cfoot{}
+      \renewcommand{\headrulewidth}{0.8pt}
+      \renewcommand{\footrulewidth}{0.8pt}
+   % CAPTION
+      \DeclareCaptionFormat{myformat}{\rmfamily\small\textsc{#1}#2{#3}}
+      \captionsetup{format={myformat},labelsep={period}}
+   \AtEndPreamble{\color{headerColor}}% EXEC'D B4 DOC BEGIN OTHERWISE NADA
+   \AtBeginDocument{%
+      % \rowcolors{0}{evenRowColor}{oddRowColor}%
+      % \color{tableColor}%
+      % \sffamily%
+      % \footnotesize%
+      % \changestrut%
+      % \calcmaxrows%
+   }
+   \setlength{\parindent}{0\p@}% INDENTATION IS NOT AN OPTION
 
-  \DeclareOption{gray}{%
-    % ROWS
-    \providecolor{evenRowColor}{gray}{1}
-    \providecolor{oddRowColor}{gray}{0.85}
-    % TEXT
-    \providecolor{evenRowTextColor}{gray}{0}
-    \providecolor{oddRowTextColor}{gray}{0}
-    % TABLE HEADER ROW, TABLE LINES; GRAPH AXES, LABELS 
-    \providecolor{tableColor}{gray}{0.1}
-    % FANCYHDR HEADER AND FOOTER
-    \providecolor{headerColor}{gray}{0.25}
-    % GRAPH CURVE AND GRID
-    \providecolor{curveColor}{gray}{.25}
-  }
+   \DeclareOption{gray}{%
+      % ROWS
+      \providecolor{evenRowColor}{gray}{1}
+      \providecolor{oddRowColor}{gray}{0.85}
+      % TEXT
+      \providecolor{evenRowTextColor}{gray}{0}
+      \providecolor{oddRowTextColor}{gray}{0}
+      % TABLE HEADER ROW, TABLE LINES; GRAPH AXES, LABELS 
+      \providecolor{tableColor}{gray}{0.05}
+      % FANCYHDR HEADER AND FOOTER
+      \providecolor{headerColor}{gray}{0.25}
+      % GRAPH CURVE
+      \providecolor{curveColor}{gray}{0.35}
+   }
 
-  \DeclareOption{graph}{%
-    \AtEndPreamble{%
-      \usepackage{
-        pgf,
-        pgfplots,
-        pgfplotstable,
-      }
-      \usepgfplotslibrary{dateplot}%
-      \pgfplotsset{%
-        compat=1.16,% 
-        width={\textwidth},%
-        height={\dimexpr\textheight*28/125\relax},% textheight*1.12/5  TO REDUCE GRAPHCOMPRESSION
-        grid=both,%
-        every major grid/.append style={line width=.6pt},%
-        every minor grid/.append style={line width=.4pt},%
-        enlarge x limits=0.005,%
-        enlarge y limits=auto,%
-        colormap={mycm}{%
-          color(1)=(blue!70), color(2.5)=(teal!70),%
-          color(4.5)=(green), color(7)=(yellow),%
-          color(11)=(red), color(14)=(magenta)},%
-        my style/.style={font=\footnotesize},%
-        date coordinates in=x,%
-        minor x tick num=1,%
-        ymin=1,%
-        ytick distance=1,%
-        y coord trafo/.code={\pgfmathparse{#1-(\mya-1)/\mya*(#1-\myb)*(#1>\myb)}},%
-        y coord inv trafo/.code={\pgfmathparse{#1+(\mya-1)*(#1-\myb)*(#1>\myb)}},%
-        % yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},%  
-        % extra y ticks={10,11,12,13,14,15,16,17},% extra grid lines or just increased tick distance?
-        % yticklabel={\pgfmathparse{int(\tick)}% which ticks show have a gridline but no number (overlapping)
-          % \ifnum\pgfmathresult=10
-          % \else
-          % \ifnum\pgfmathresult=11
-          % \else
-          % \ifnum\pgfmathresult=12
-          % \else
-          % \ifnum\pgfmathresult=13
-          % \else
-          % \ifnum\pgfmathresult=14
-          % \else
-          % \ifnum\pgfmathresult=15
-          % \else
-          % \ifnum\pgfmathresult=16
-          % \else
-          % \ifnum\pgfmathresult=17
-          %  \else
-        % \pgfmathprintnumber{\tick}
-          %  \fi
-          %  \fi
-          %  \fi
-          %  \fi
-          %  \fi
-          %  \fi
-          %  \fi
-          %  \fi
-        % },
-        table/col sep=comma,%
-        xticklabel={\day.\month.},%
-        x tick label style={%
-          rotate=38,%
-          anchor=east,%
-          },%
-        ylabel style={%
-          font={\large},
-          yshift={-\textwidth+0.5cm},% 
-          },%
+   \DeclareOption{graph}{%
+      \AtEndPreamble{%
+         \usepackage{%
+            pgf,%
+            pgfplots,%
+            pgfplotstable
+         }%
+         \usetikzlibrary{external}%
+         \tikzexternalize[%
+            prefix=\myRelPath,%
+            verbose=false,%
+         ]%
+         \pgfplotsset{%
+            compat=1.16,% 
+            width={\textwidth},%
+            height={\dimexpr\textheight*29/125\relax},% textheight*~1.12/5  for 5 graphs
+            grid=major,%
+            every minor grid/.append style={line width=0.25pt},%
+            every extra y tick/.style={grid=minor},%
+            enlarge x limits=0.003,% FIXME- decide
+            enlarge y limits=auto,%
+            colormap={mycm}{%
+               color(1)=(blue!70),%
+               color(2.5)=(teal!70),%
+               color(4.5)=(green),%
+               color(7)=(yellow),%
+               color(11)=(red),%
+               color(14)=(magenta)%
+            },%
+            y coord trafo/.code={\pgfmathparse{#1-(\mya-1)/\mya*(#1-\myb)*(#1>\myb)}},%
+            y coord inv trafo/.code={\pgfmathparse{#1+(\mya-1)*(#1-\myb)*(#1>\myb)}},%
+            date coordinates in=x,%
+            xtick distance=1,% 1 DAY
+            ytick distance=1,% 1 mM
+            ymin=1,%
+            %
+            %
+            %
+            %
+            % \pgfplotsset{%
+            %    FUCK/.code={%
+            %       \edef\tmpa{}%
+            %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
+            %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
+            %          {\pgfmathparse{\myb+\x*\mya/\myc}\xdef\tmpa{\tmpa\pgfmathresult,} }%
+            %       \edef\tmpa{\tmpa30.0}%
+            %       \pgfplotsset{extra y ticks={\tmpa}}%
+            %    }%
+            % }%
+            %
+            % \pgfplotsset{%
+            %    FUCK/.code={%
+            %       \pgfplotsset{extra y ticks={%
+            %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
+            %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
+            %          {\pgfmathparse{\myb+\x*\mya/\myc}\pgfmathresult,}%
+            %       30.0%
+            %       }}%
+            %    }%
+            % }%
+            %
+            %
+            %
+            %
+            % every tick/.style={very thin,color={rgb,255:red,29;green,25;blue,32}},%
+            every tick/.style={line width=0pt},%
+            axis y line=left,%
+            % axis y line shift=5pt,%
+            % yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},% default
+            yticklabel={\pgfmathparse{int(\tick)}% which ticks show have a gridline but no number (overlapping)
+               \ifnum\pgfmathresult=\myb
+                  \color{red}%
+               \fi
+               \pgfmathprintnumber{\tick}%
+               % \ifnum\pgfmathresult=11
+               % \else
+               % \ifnum\pgfmathresult=15
+               % \else
+               % \ifnum\pgfmathresult=19
+               % \else
+               %    \pgfmathprintnumber{\tick}%
+               % \fi
+               % \fi
+               % \fi
+            },%
+            xticklabel={\day.},% xticklabel={\month.\day.},%
+            ylabel style={%
+               font={\large},%
+               yshift={-\textwidth+0.4cm},% 
+            },%
+            table/col sep=comma,%
+         }%
       }%
-      \usetikzlibrary{external}%
-      \tikzexternalize[%
-        prefix=\myRelPath,%
-        verbose=false,%
-      ]%
-    }%
-    \AtEndDocument{%
-      % \tikzset{external/force remake}%
-      \centering%
-      \pdfbookmark[0]{Graphs}{graphs}%
-      \dmlb@graph{}%
-    }
-  }
+      \AtEndDocument{%
+         % \tikzset{external/force remake}%
+         \centering%
+         % \pgfplotsset{FUCK}%
+         \dmlb@graph%
+      }
+   }
 
-  \ExecuteOptions{gray}
-  \ProcessOptions\relax
+   \ExecuteOptions{gray}
+   \ProcessOptions\relax
 % COUNTERS ============================
-  % SWITCHES FOR ROW/DATE BG AND TEXT COLORS
-  \newbool{dmlb@rcc}% DATE COLUMN COLOR
-  \newbool{dmlb@rc}
-  % REFCOUNTER FOR LONGTABLEROW ROW LABELS
-  \newcounter{dmlb@dateLabel}
-  % MULTIROW LENGTH AND PAGE ROWCOUNT
-  \newcount\dmlb@mrow
-  \newcount\row
-  % MAXROWS
-  \newcount\dmlb@maxrows
-  % CURRENT ROW TEXTHEIGHTS
-  \newcount\dmlb@potato 
-  % DATE
-  \newcount\year
-  \newcount\month
-  \newcount\day
-  \newbool{@leap}
-  % DATA SWITCHES/COUNTERS
-  \newbool{dmlb@openDatFile}
-  \newbool{dmlb@readPeriod}
-  \newbool{dmlb@doneReading}
-  \newcounter{dmlb@dataSet}
-  % FILE INPUT
-  \newcount\dmlbYY
-  \newcount\dmlbMM
+   % SWITCHES FOR ROW/DATE BG AND TEXT COLORS
+   \newbool{dmlb@rcc}% DATE COLUMN COLOR
+   \newbool{dmlb@rc}
+   % REFCOUNTER FOR LONGTABLEROW ROW LABELS
+   \newcounter{dmlb@dateLabel}
+   % MULTIROW LENGTH AND PAGE ROWCOUNT
+   \newcount\dmlb@mrow
+   \newcount\row
+   % MAXROWS
+   \newcount\dmlb@maxrows
+   % CURRENT ROW TEXTHEIGHTS
+   \newcount\@potato
+   % DATE- title case to not conflict with current day counts
+   \newcount\Year
+   \newcount\Month
+   \newcount\Day
+   \newbool{@leap}
+   % DATA SWITCHES/COUNTERS
+   \newbool{dmlb@openDatFile}
+   \newbool{dmlb@readPeriod}
+   \newbool{dmlb@doneReading}
+   \newcounter{dmlb@dataSet}
+   % FILE INPUT
+   \newcount\tmpa
+   \newcount\tmpb
 % COMMANDS ============================
 \newcommand{\autoFileInput}[1]{% RELATIVE PATHFILE AS ARG
-  \IfFileExists{#1\TwoDigits{\the\dmlbYY}-\TwoDigits{\the\dmlbMM}}%
-  {%
-    \input{#1\TwoDigits{\the\dmlbYY}-\TwoDigits{\the\dmlbMM}}%
-    \ifnum\dmlbMM=12 
-      \global\advance\dmlbYY 1\relax%
-      \global\dmlbMM 0\relax%
-    \fi
-    \global\advance\dmlbMM 1\relax%
-    \autoFileInput{#1}%
-  }%
-  {}%
+   \IfFileExists{#1\TwoDigits{\the\tmpa}-\TwoDigits{\the\tmpb}}%
+   {%
+      \input{#1\TwoDigits{\the\tmpa}-\TwoDigits{\the\tmpb}}%
+      \ifnum\tmpb=12 
+         \global\advance\tmpa 1\relax%
+         \global\tmpb 0\relax%
+      \fi
+      \global\advance\tmpb 1\relax%
+      \autoFileInput{#1}%
+   }%
+   {}%
 }
 
-\NewDocumentCommand \dmlbSetDate { m m m O{} } {% (RE)SETS DATE TO ANY YEAR, MONTH AND/OR DAY; OPT AUTO FILE INPUT IN `YY-MM` FORM FROM GIVEN/CURRENT DATE ONWARDS IN REL PATH `#4`; ALL ENTRIES AFTER LAST DDATE IN LAST INPUT FILE GETS THE NEW DATE- FIX BY HAVING ALL FILES END WITH ENTRY W/ DDATE, I.E. ALL ENTRIES FROM THAT DATE; FIXME? IF SUCH DATE GIVEN SUCH THAT NEW LABELS OVERLAP WITH OLD ONES, REFERENCES/BOOKMARKS ARE FUCKED
-  % \newcommand{\iflabelexists}[3]{\ifcsundef{r@#1}{#3}{#2}}-- POSSIBLE FIX, #3 IS THE ABOVE CASE
-  \if\relax\detokenize{#1}\relax
-  \else
-    \global\year #1\relax
-    \StrGobbleLeft{\the\year}{2}[\syear]%
-    \xdef\syear{\syear}%
-    % LEAP YEAR?
-    \ifnum\numexpr(\year-(\year/4)*4)\relax=0 
-      \ifnum\numexpr(\year-(\year/400)*400)\relax=0
-        \global\boolfalse{@leap}% FALSE LEAP YEAR
+\NewDocumentCommand \dmlbsetdate { m m m O{} } {% (RE)SETS DATE TO {YYYY}{MM}{DD}; OPT AUTO FILE INPUT IN `YY-MM` FORM FROM GIVEN/CURRENT DATE ONWARDS IN REL PATH `#4`; ALL ENTRIES AFTER LAST STARRED ENTRY IN LAST INPUT FILE GET THE NEW DATE- FIX BY HAVING ALL FILES END WITH STARRED ENTRY, SAME GOES FOR CHANGING DATE- END THE LAST ENTRY WITH *
+   % DIFFERENT YEAR?
+   \ifnum\Year=#1
+      \ifnum\Month=#2
+         \global\Day #3\relax%
       \else
-        \global\booltrue{@leap}% TRUE LEAP YEAR
+         \global\Month #2\relax%
+         \global\Day #3\relax%
+         \pdfbookmark[1]{\monthn@me}{\dmlb@Date}%
       \fi
-    \else
-      \global\boolfalse{@leap}%
-    \fi
-  \fi
-  %
-  \if\relax\detokenize{#2}\relax
-  \else
-    \global\month #2\relax%
-  \fi
-  %
-  \if\relax\detokenize{#3}\relax
-  \else
-    \global\day #3\relax%
-  \fi
-  % IF 1,2,3 EMPTY ROW GETS SAME LABEL REASSIGNED
-  \dmlb@rowlabel{\dmlb@Date}%
-  %
-  \if\relax\detokenize{#1}\relax
-  \else
-    \pdfbookmark{\the\year}{\dmlb@Date}%
-  \fi
-  %
-  \if\relax\detokenize{#2}\relax
-  \else
-    \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-  \fi
-  %
-  \if\relax\detokenize{#4}\relax
-  \else
-    \global\dmlbYY \syear\relax
-    \global\dmlbMM \month\relax
-    \autoFileInput{#4}%
-  \fi
+   \else
+      \global\Year #1\relax
+      \StrGobbleLeft{\the\Year}{2}[\sYear]%
+      \xdef\sYear{\sYear}%
+      % LEAP YEAR?
+      \ifnum\numexpr(\Year-(\Year/4)*4)\relax=0 
+         \ifnum\numexpr(\Year-(\Year/400)*400)\relax=0
+            \global\boolfalse{@leap}% FALSE LEAP YEAR
+         \else
+            \global\booltrue{@leap}% TRUE LEAP YEAR
+         \fi
+      \else
+         \global\boolfalse{@leap}%
+      \fi
+      \global\Month #2\relax%
+      \global\Day #3\relax%
+      \pdfbookmark{\the\Year}{\dmlb@Date}%
+      \pdfbookmark[1]{\monthn@me}{\dmlb@Date}%
+   \fi
+   %
+   \if\relax\detokenize{#4}\relax
+   \else
+      \immediate\newwrite\periods%
+      \immediate\openout\periods=\myRelPath0.dat%
+      \pgfcalendardatetojulian{\year-\month-\day}{\tmpa}
+      \pgfcalendardatetojulian{\dmlb@Date}{\tmpb}%
+      \global\advance\tmpa -\tmpb\relax%
+      \global\divide\tmpa \myd\relax%
+      \pgfcalendardatetojulian{#1-#2-#3}{\tmpb}%
+      \pgfcalendarjuliantodate{\tmpb}{\iY}{\iM}{\iD}%
+      \global\tmpb 0\relax%
+      \writeperiods%
+      \global\@potato 0\relax%
+      \immediate\closeout\periods%
+      \gdef\dmlb@Date{\the\Year-\TwoDigits{\the\Month}-\TwoDigits{\the\Day}}%
+      \immediate\newwrite\data%
+      \newread\periods%
+      \openin\periods=\myRelPath0.dat%
+      \global\tmpa \sYear\relax%
+      \global\tmpb \Month\relax%
+      \autoFileInput{#4}%
+   \fi
+}
+
+\def\writeperiods{%
+   \ifnum\tmpb=\tmpa
+      \immediate\write\periods{\iY-\iM-\iD}%
+      \pgfcalendardatetojulian{\year-\month-\day}{\@potato}
+      \pgfcalendarjuliantodate{\@potato}{\iY}{\iM}{\iD}%
+      \immediate\write\periods{\iY-\iM-\iD}%
+   \else
+      \global\advance\tmpb 1\relax
+      \immediate\write\periods{\iY-\iM-\iD}%
+      \pgfcalendardatetojulian{\iY-\iM-\iD+\myd}{\@potato}%
+      \pgfcalendarjuliantodate{\@potato}{\iY}{\iM}{\iD}%
+      \immediate\write\periods{\iY-\iM-\iD}%
+      \writeperiods%
+   \fi
 }
 
 \newcommand{\dmlb@rowlabel}[1]{\refstepcounter{dmlb@dateLabel}\label{#1}}
 
 \NewDocumentCommand {\dmlb@ddate} { s } {% INCREMENTS DATE (IF UNSTARRED), ROW LABEL, PDF BOOKMARK, PRINTS DATE IF ENOUGH ROOM
-  \small%
-  \ifbool{dmlb@rcc}%
-    {\color{oddRowTextColor}\IfBooleanF{#1}{\global\boolfalse{dmlb@rcc}}}%
-    {\color{evenRowTextColor}\IfBooleanF{#1}{\global\booltrue{dmlb@rcc}}}%
-  \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>2% ROOM FOR DATE?
-    \ifnum\dmlb@mrow=1
-      % \multirow{-\strip@pt\dimexpr((\mym*\p@/\textwidth)*(\dmlb@potato-1))\relax}{*}{\rotatebox{90}{\TwoDigits{\the\day}--\TwoDigits{\the\month}\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 --\syear\fi}}%
-      \multirow{-\strip@pt\dimexpr((\mym*\p@/\textwidth)*(\dmlb@potato-1))\relax}{*}{\rotatebox{90}{% #genius
-        \TwoDigits{\the\day}--%
-        \TwoDigits{\the\month}%
-        \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>6 --\the\year%
-        \else
-          \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 --\syear\fi
-        \fi
-      }}%
-    \else
-      % \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{\TwoDigits{\the\day}--\TwoDigits{\the\month}\ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 --\syear\fi}}%
-      \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{%
-        \TwoDigits{\the\day}--%
-        \TwoDigits{\the\month}%
-        \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>6 --\the\year%
-        \else
-          \ifnum\numexpr(\dmlb@mrow+\dmlb@potato-1)\relax>4 --\syear\fi
-        \fi
-      }}%
-    \fi
-  \fi
-  \IfBooleanF{#1}{% FIXME, THERE HAS TO BE A BETTER WAY
-    \ifnum\day=31
-      \ifnum\month=12
-        \global\advance\year 1\relax%
-        \global\month 1\relax%
-        \global\day 0\relax%
-        \StrGobbleLeft{\the\year}{2}[\syear]%
-        \xdef\syear{\syear}%
-        \ifnum\numexpr(\year-(\year/4)*4)\relax=0 
-          \ifnum\numexpr(\year-(\year/400)*400)\relax=0% RIP years 0--400 because of floored division- possible fix, check if >400 else branch is go into negatives and mult by -1 at end
-            \global\boolfalse{@leap}% FALSE LEAP YEAR
-          \else
-            \global\booltrue{@leap}% TRUE LEAP YEAR
-          \fi
-        \else
-          \global\boolfalse{@leap}%
-        \fi
-        \pdfbookmark{\the\year}{\the\year}% 
-      \else% NO YEAR STEP REQUIRED
-        \global\advance\month 1\relax
-        \global\day 0\relax%
-      \fi
-      \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-    \else% NOT 31
-      \ifnum\day=30
-        \ifnum\month=4
-          \global\advance\month 1\relax%
-          \global\day 0\relax%
-          \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-        \else
-          \ifnum\month=6
-            \global\advance\month 1\relax%
-            \global\day 0\relax%
-            \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-          \else
-            \ifnum\month=9
-              \global\advance\month 1\relax%
-              \global\day 0\relax%
-              \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+   \small%
+   \ifbool{dmlb@rcc}%
+      {\color{oddRowTextColor}\IfBooleanF{#1}{\global\boolfalse{dmlb@rcc}}}%
+      {\color{evenRowTextColor}\IfBooleanF{#1}{\global\booltrue{dmlb@rcc}}}%
+   \ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>2% ROOM FOR DATE?
+      \ifnum\dmlb@mrow=1
+         % \multirow{-\strip@pt\dimexpr((\mym*\p@/\textwidth)*(\@potato-1))\relax}{*}{\rotatebox{90}{\TwoDigits{\the\Day}--\TwoDigits{\the\Month}\ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>4 --\sYear\fi}}%
+         \multirow{-\strip@pt\dimexpr((\mym*\p@/\textwidth)*(\@potato-1))\relax}{*}{\rotatebox{90}{% #genius
+            \TwoDigits{\the\Day}--%
+            \TwoDigits{\the\Month}%
+            \ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>6 --\the\Year%
             \else
-              \ifnum\month=11
-                \global\advance\month 1\relax%
-                \global\day 0\relax%
-                \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-              \fi
+               \ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>4 --\sYear\fi
             \fi
-          \fi
-        \fi
-      \else% NOT 30, IS IT FEB?
-        \ifnum\month=2
-          \ifbool{@leap}% IS LEAP?
-          {%
-            \ifnum\day=29
-              \global\advance\month 1\relax%
-              \global\day 0\relax%
-              \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+         }}%
+      \else
+         % \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{\TwoDigits{\the\Day}--\TwoDigits{\the\Month}\ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>4 --\sYear\fi}}%
+         \multirow{-\dmlb@mrow}{*}{\rotatebox{90}{%
+            \TwoDigits{\the\Day}--%
+            \TwoDigits{\the\Month}%
+            \ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>6 --\the\Year%
+            \else
+               \ifnum\numexpr(\dmlb@mrow+\@potato-1)\relax>4 --\sYear\fi
             \fi
-          }%
-          {%
-            \ifnum\day=28% ISNOLEAP?
-              \global\advance\month 1\relax%
-              \global\day 0\relax%
-              \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
-            \fi
-          }%
-        \fi
+         }}%
       \fi
-    \fi
-    \global\advance\day 1\relax%
-    \dmlb@rowlabel{\dmlb@Date}%
-  }%
-  \global\dmlb@mrow 0\relax%
-  &%
+   \fi
+   \IfBooleanF{#1}{% FIXME, THERE HAS TO BE A BETTER WAY
+      \ifnum\Day=31
+         \ifnum\Month=12
+            \global\advance\Year 1\relax%
+            \global\Month 1\relax%
+            \global\Day 0\relax%
+            \StrGobbleLeft{\the\Year}{2}[\sYear]%
+            \xdef\sYear{\sYear}%
+            \ifnum\numexpr(\Year-(\Year/4)*4)\relax=0 
+               \ifnum\numexpr(\Year-(\Year/400)*400)\relax=0% RIP YEARs 0--400 because of floored division- possible fix, check if >400 else branch is go into negatives and mult by -1 at end
+                  \global\boolfalse{@leap}% FALSE LEAP YEAR
+               \else
+                  \global\booltrue{@leap}% TRUE LEAP YEAR
+               \fi
+            \else
+               \global\boolfalse{@leap}%
+            \fi
+            \pdfbookmark{\the\Year}{\the\Year}% 
+         \else% NO YEAR STEP REQUIRED
+            \global\advance\Month 1\relax
+            \global\Day 0\relax%
+         \fi
+         \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+      \else% NOT 31
+         \ifnum\Day=30
+            \ifnum\Month=4
+               \global\advance\Month 1\relax%
+               \global\Day 0\relax%
+               \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+            \else
+               \ifnum\Month=6
+                  \global\advance\Month 1\relax%
+                  \global\Day 0\relax%
+                  \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+               \else
+                  \ifnum\Month=9
+                     \global\advance\Month 1\relax%
+                     \global\Day 0\relax%
+                     \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+                  \else
+                     \ifnum\Month=11
+                        \global\advance\Month 1\relax%
+                        \global\Day 0\relax%
+                        \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+                     \fi
+                  \fi
+               \fi
+            \fi
+         \else% NOT 30, IS IT FEB?
+            \ifnum\Month=2
+               \ifbool{@leap}% IS LEAP?
+               {%
+                  \ifnum\Day=29
+                     \global\advance\Month 1\relax%
+                     \global\Day 0\relax%
+                     \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+                  \fi
+               }%
+               {%
+                  \ifnum\Day=28% ISNOLEAP?
+                     \global\advance\Month 1\relax%
+                     \global\Day 0\relax%
+                     \pdfbookmark[1]{\monthn@me}{\dmlb@sDate}%
+                  \fi
+               }%
+            \fi
+         \fi
+      \fi
+      \global\advance\Day 1\relax%
+      \dmlb@rowlabel{\dmlb@Date}%
+   }%
+   \global\dmlb@mrow 0\relax%
+   &%
 }
 
 \newcommand{\dmlb@checkmedaddy}[1]{%
-  \ifbool{dmlb@readPeriod}%
-  {%
-    \ifbool{dmlb@openDatFile}%
-    {%
-      \IfStrEq{\dmlb@Date\fixme}{\dmlb@fDate}%
+   \ifbool{dmlb@readPeriod}%
+   {%
+      \ifbool{dmlb@openDatFile}%
       {%
-        \immediate\closeout\data
-        \global\boolfalse{dmlb@openDatFile}%
-        \global\boolfalse{dmlb@readPeriod}%
+         \IfStrEq{\dmlb@Date\fixme}{\dmlb@fDate}%
+         {%
+            \immediate\closeout\data
+            \global\boolfalse{dmlb@openDatFile}%
+            \global\boolfalse{dmlb@readPeriod}%
+         }%
+         {%
+            {#1}%
+         }%
       }%
       {%
-        {#1}%
+         \IfStrEq{\dmlb@Date\fixme}{\dmlb@iDate}%
+         {%
+            \stepcounter{dmlb@dataSet}%
+            \immediate\openout\data=\myRelPath\thedmlb@dataSet.dat
+            \global\booltrue{dmlb@openDatFile}%
+            {#1}%
+         }%
+         {}%
       }%
-    }%
-    {%
-      \IfStrEq{\dmlb@Date\fixme}{\dmlb@iDate}%
-      {%
-        \stepcounter{dmlb@dataSet}%
-        \immediate\openout\data=\myRelPath\thedmlb@dataSet.dat
-        \global\booltrue{dmlb@openDatFile}%
-        {#1}%
-      }%
-      {}%
-    }%
-  }%
-  {%
-    \global\read\periods to \dmlb@iDate%
-    \ifeof\periods
-      \global\booltrue{dmlb@doneReading}%
-      \immediate\closeout\data%
-      \immediate\closein\periods%
-    \else
-      \global\read\periods to \dmlb@fDate%
-      \global\booltrue{dmlb@readPeriod}%
-      \dmlb@checkmedaddy{#1}%
-    \fi
-  }%
+   }%
+   {%
+      \global\read\periods to \dmlb@iDate%
+      \ifeof\periods
+         \global\booltrue{dmlb@doneReading}%
+         \immediate\closeout\data%
+         \immediate\closein\periods%
+      \else
+         \global\read\periods to \dmlb@fDate%
+         \global\booltrue{dmlb@readPeriod}%
+         \dmlb@checkmedaddy{#1}%
+      \fi
+   }%
 }
 
-% \NewDocumentCommand \dmlb@QQ { O{&} m m m m m m m } {%
 \newcommand{\dmlb@QQ}[8][&]{%
-  \ifstrequal{&}{#1}%
-    {\global\advance\dmlb@mrow \dmlb@potato\relax}%
-    {\global\advance\dmlb@mrow 1\relax}%
-  \ifbool{dmlb@doneReading}%
-    {}%
-    {\dmlb@checkmedaddy{%
-      \ifblank{#3}% FIXME- checking if #3 blank inside checkmedaddy would require definition here
-        {}%
-        {\immediate\write\data{\dmlb@Date\fixme#2, #3}}%
-      % % Data collection for spreadsheet
-      % \immediate\write\data{\dmlb@Date\fixme#2, #3, #4, #5, #6, #7}% , #8- expand within the write or before it somehow?
-    }}%
-  \ifbool{dmlb@rc}%
-    {\rowstyle{\color{evenRowTextColor}}\global\boolfalse{dmlb@rc}}%
-    {\rowstyle{\color{oddRowTextColor}}\global\booltrue{dmlb@rc}}%
-  \ifbool{dmlb@rcc}%
-    {\cellcolor{oddRowColor}}%
-    {\cellcolor{evenRowColor}}%
-  #1% date
-  #2&% time
-  #3&% blood glucose
-  #4&% insulin
-  #5&% carbohydrates
-  #6&% protein
-  #7&% fat
-  #8% remarks
-  \color{tableColor}%
-  \\%
+   \ifstrequal{&}{#1}%
+      {\global\advance\dmlb@mrow \@potato\relax}%
+      {\global\advance\dmlb@mrow 1\relax}%
+   \ifbool{dmlb@doneReading}%
+      {}%
+      {\dmlb@checkmedaddy{%
+         \ifblank{#3}% FIXME- checking if #3 blank inside checkmedaddy would require definition here
+            {}%
+            {\immediate\write\data{\dmlb@Date\fixme#2, #3}}%
+         % % Data collection for spreadsheet
+         % \immediate\write\data{\dmlb@Date\fixme#2, #3, #4, #5, #6, #7}% , #8- expand within the write or before it somehow?
+      }}%
+   \ifbool{dmlb@rc}%
+      {\rowstyle{\color{evenRowTextColor}}\global\boolfalse{dmlb@rc}}%
+      {\rowstyle{\color{oddRowTextColor}}\global\booltrue{dmlb@rc}}%
+   \ifbool{dmlb@rcc}%
+      {\cellcolor{oddRowColor}}%
+      {\cellcolor{evenRowColor}}%
+   #1% date
+   #2&% time
+   #3&% blood glucose
+   #4&% insulin
+   #5&% carbohydrates
+   #6&% protein
+   #7&% fat
+   #8% remarks
+   \color{tableColor}%
+   \\%
 }
 
 \NewDocumentCommand \QQQ { m m m m m m m s } {%
-  \if\relax\detokenize{#7}\relax%
-    \global\dmlb@potato 1\relax%
-  \else
-    \setbox0=\hbox{#7}%
-    \global\dmlb@potato \dimexpr\wd0\relax\relax%
-    \global\divide\dmlb@potato \dimexpr\mym\relax\relax%
-    \global\advance\dmlb@potato 1\relax%
-  \fi
-  \global\advance\row \dmlb@potato\relax%
-  \ifnum\row>\dmlb@maxrows
-    \global\row \dmlb@potato\relax%
-    \global\dmlb@mrow 0\relax%
-    \IfBooleanTF{#8}%
-      {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
-      {\dmlb@QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% ALREADY PAGEBROKEN BOTTOM
-  \else
-    \ifnum\row=\dmlb@maxrows
-      \global\row 0\relax%
+   \if\relax\detokenize{#7}\relax%
+      \global\@potato 1\relax%
+   \else
+      \setbox0=\hbox{#7}%
+      \global\@potato \dimexpr\wd0\relax\relax%
+      \global\divide\@potato \dimexpr\mym\relax\relax%
+      \global\advance\@potato 1\relax%
+   \fi
+   \global\advance\row \@potato\relax%
+   \ifnum\row>\dmlb@maxrows
+      \global\row \@potato\relax%
+      \global\dmlb@mrow 0\relax%
       \IfBooleanTF{#8}%
-        {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
-        {\dmlb@QQ[\dmlb@ddate*]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% PAGEBROKEN TOP
-      \pagebreak%
-    \else
-      \IfBooleanTF{#8}%
-        {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
-        {\dmlb@QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
-    \fi
-  \fi
-}
-
-\newcommand{\tograph}[2]{%
-  \immediate\write\periods{#1}% dmlb@iDate
-  \immediate\write\periods{#2}% dmlb@fDate
+         {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+         {\dmlb@QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% ALREADY PAGEBROKEN BOTTOM
+   \else
+      \ifnum\row=\dmlb@maxrows
+         \global\row 0\relax%
+         \IfBooleanTF{#8}%
+            {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+            {\dmlb@QQ[\dmlb@ddate*]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}% PAGEBROKEN TOP
+         \pagebreak%
+      \else
+         \IfBooleanTF{#8}%
+            {\dmlb@QQ[\dmlb@ddate]{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+            {\dmlb@QQ{#1}{#2}{#3}{#4}{#5}{#6}{#7}}%
+      \fi
+   \fi
 }
 
 \newcommand{\dmlb@graph}{%
-  \setcounter{dmlb@dataSet}{0}%
-  \newread\periods
-  \openin\periods=\myRelPath\thedmlb@dataSet.dat
-  \read\periods to \dmlb@iDate
-  \ifeof\periods
-    % empty 0.dat, no \tograph instances
-  \else
-    \refstepcounter{dmlb@dataSet}%
-    \StrLeft{\dmlb@iDate}{4}[\firstyear]%
-    \pdfbookmark[1]{\firstyear}{gr:\firstyear}%
-    \dmlb@graphmedaddy{}%
-  \fi
-  \closein\periods
+   \setcounter{dmlb@dataSet}{0}%
+   \newread\periods
+   \openin\periods=\myRelPath0.dat
+   \read\periods to \dmlb@iDate
+   \ifeof\periods
+      % empty 0.dat, no \tograph instances
+   \else
+      % \refstepcounter{dmlb@dataSet}%
+      \StrLeft{\dmlb@iDate}{4}[\iY]%
+      \pdfbookmark[0]{Graphs}{gr:0}%
+      \pdfbookmark[1]{\iY}{gr:\iY}%
+      \dmlb@graphmedaddy{}%
+   \fi
+   \closein\periods
 }
 
 \newcommand{\dmlb@graphmedaddy}{%
-  \read\periods to \dmlb@fDate
-  %
-  \tikzsetnextfilename{\thedmlb@dataSet}%
-  %
-  \StrLeft{\dmlb@fDate}{4}[\secondyear]%
-  \ifnum\secondyear>\firstyear
-    \pdfbookmark[1]{\secondyear}{gr:\secondyear}%
-  \fi
-  \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
-  %
-  \begin{tikzpicture}%
-  \begin{axis}[%
-    % \dmlb@grOpts,% fixme- this or the default, ifcsundef? 
-    xmin=\dmlb@iDate 00:00,%
-    xmax=\dmlb@fDate 00:00,% 
-    ylabel={{\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}}},% KERNS TO NEGATE TRIALING SPACE FROM \READ
-  ]
-    \addplot [scatter, sharp plot, color=curveColor] table [header=false, x index=0, y index=1] {\myRelPath\thedmlb@dataSet.dat};%
-    % \addplot [\dmlb@grOpts] table [header=false, x index=0, y index=1] {\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
-
-  \end{axis}%
-  \end{tikzpicture}%
-  \read\periods to \dmlb@iDate
-  \ifeof\periods
-    % DONT REPEAT
-  \else
-    \fixme% single space to avoid graph concatenation, but why
-    \refstepcounter{dmlb@dataSet}%
-    \StrLeft{\dmlb@iDate}{4}[\firstyear]%
-    \ifnum\firstyear>\secondyear
-      \pdfbookmark[1]{\firstyear}{gr:\firstyear}%
-    \fi
-    \dmlb@graphmedaddy{}%
-  \fi
+   \refstepcounter{dmlb@dataSet}%
+   \read\periods to \dmlb@fDate
+   \StrLeft{\dmlb@fDate}{4}[\fY]%
+   \ifnum\iY=\fY
+   \else
+      \pdfbookmark[1]{\fY}{gr:\fY}%
+   \fi
+   \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
+   \tikzsetnextfilename{\thedmlb@dataSet}%
+   \begin{tikzpicture}%
+   \begin{axis}[%
+      % \dmlb@grOpts,% fixme- this or the default, ifcsundef? 
+      xmin={\dmlb@iDate},% 00:00 if no no time given
+      xmax={\dmlb@fDate},%
+      ylabel={{\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}}},% KERNS TO NEGATE TRIALING SPACE FROM \READ
+   ]%
+      \addplot [scatter, sharp plot, color=curveColor] table [header=false, x index=0, y index=1] {\myRelPath\thedmlb@dataSet.dat};%
+      % \addplot [\dmlb@grOpts] table [header=false, x index=0, y index=1] {\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
+   \end{axis}%
+   \end{tikzpicture}%
+   \read\periods to \dmlb@iDate
+   \ifeof\periods
+      % DONT REPEAT
+   \else
+      \fixme% single space to avoid graph concatenation, but why
+      % \refstepcounter{dmlb@dataSet}%
+      \StrLeft{\dmlb@iDate}{4}[\iY]%
+      \dmlb@graphmedaddy{}%
+   \fi
 }
 
 \newcommand{\monthn@me}{%
-  \ifcase\month 
-    \or January%
-    \or Febuary%
-    \or March%
-    \or April%
-    \or May%
-    \or June%
-    \or July%
-    \or August%
-    \or September%
-    \or October%
-    \or November%
-    \or December%
-  \fi
+   \ifcase\Month 
+      \or January%
+      \or Febuary%
+      \or March%
+      \or April%
+      \or May%
+      \or June%
+      \or July%
+      \or August%
+      \or September%
+      \or October%
+      \or November%
+      \or December%
+   \fi
 }
 
-\newcommand{\dmlb@sDate}{\the\year-\TwoDigits{\the\month}}
+\def\dmlb@sDate{\the\Year-\TwoDigits{\the\Month}}
 
-\newcommand{\dmlb@Date}{\the\year-\TwoDigits{\the\month}-\TwoDigits{\the\day}}
+\def\dmlb@Date{\the\Year-\TwoDigits{\the\Month}-\TwoDigits{\the\Day}}
 
 \def\fixme{ }% `\protect\ ' in fragile cmd like \write; `\let` doesn't expand; `\chardef` doesn't work; neither does `\ `
 
 \newcommand{\TwoDigits}[1]{\ifnum#1<10 0#1\else#1\fi}% DOESN'T WORK AS ROBUST COMMAND
 
 \newcommand{\changestrut}{% VERTICAL ALIGNMENT OF TEXT WITHIN TABLE ROWS- EQUAL HEIGHT TO TOP AND BOTTOM \HLINE FROM A CAPITAL; TO BE USED ON ALL GLYPHS WITHOUT DESCENDERS OF USED FONT; thanks to Marcel Krüger from tex.stackexchange.com
-  \setbox\strutbox\hbox{%
-    \setbox0\hbox{ABCDEFGHJIKLMNOPQRSTUVWXYZabcdefhiklmnorstuvwxz.?!;:-1234567890}% 
-    \skip0\dimexpr\baselineskip-\ht0-\dp0\relax%
-    \vrule height\glueexpr\ht0+.5\skip0\relax depth\glueexpr\dp0+.5\skip0\relax width0pt% edit to liking
-  }%
+   \setbox\strutbox\hbox{%
+      \setbox0\hbox{ABCDEFGHJIKLMNOPQRSTUVWXYZabcdefhiklmnorstuvwxz.?!;:-1234567890}% 
+      \skip0\dimexpr\baselineskip-\ht0-\dp0\relax%
+      \vrule height\glueexpr\ht0+.5\skip0\relax depth\glueexpr\dp0+.5\skip0\relax width0pt% edit to liking
+   }%
 }
 
-\newcommand{\calcmaxrows}{% FLOOR DIVISION
-  \global\dmlb@maxrows \dimexpr\textheight*\p@/(\baselineskip+\arrayrulewidth)\relax\relax%
-  \global\divide\dmlb@maxrows \p@\relax%
+\newcommand{\calcmaxrows}{% FLOOR DIV, BEST DIV
+   \global\dmlb@maxrows \dimexpr\textheight*\p@/(\baselineskip+\arrayrulewidth)\relax\relax%
+   \global\divide\dmlb@maxrows \p@\relax%
 }
 
 % APPLYING TEXT COLOR FROM CELL TO CELL WITHIN ROW
-  \newcommand*{\@rowstyle}{}
+   \newcommand*{\@rowstyle}{}
 
-  \newcommand*{\rowstyle}[1]{% sets the style of the next row
-    \gdef\@rowstyle{#1}%
-    \@rowstyle\ignorespaces%
-  }
+   \newcommand*{\rowstyle}[1]{% sets the style of the next row
+      \gdef\@rowstyle{#1}%
+      \@rowstyle\ignorespaces%
+   }
 
-  \newcolumntype{=}{% resets the row style
-    >{\gdef\@rowstyle{}}%
-  }
+   \newcolumntype{=}{% resets the row style
+      >{\gdef\@rowstyle{}}%
+   }
 
-  \newcolumntype{+}{% adds the current row style to the next column
-    >{\@rowstyle}%
-  }
-% REST ================================
-\AtEndPreamble{\color{headerColor}}% EXEC'D B4 DOC BEGIN OTHERWISE NADA
-\AtBeginDocument{%
-  \rowcolors{0}{evenRowColor}{oddRowColor}%
-  \color{tableColor}%
-  \sffamily%
-  \footnotesize%
-  \changestrut%
-  \calcmaxrows%
-}
+   \newcolumntype{+}{% adds the current row style to the next column
+      >{\@rowstyle}%
+   }
+
 
 \endinput
+
+FIXME'S
+   - pgfplots/extra xyz ticks={} doesn't accept an edef'd macro that expands correctly as an arg--- fucking why
+   - if above gets fixed somefuckinghow- read off all values and surpress tick label manifestation
+
+
+
+
+\hyperref[2000-01-07]{\pgfcalendarcurrentweekday} is a link to first entry of 2000-01-07.}
+
+\pgfcalendarcurrentjulian

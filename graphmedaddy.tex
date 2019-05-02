@@ -1,34 +1,36 @@
 \documentclass[a4paper]{article}
 \usepackage[
-    top=1.5cm, 
-    bottom=0.6cm, 
-    hmargin=1cm,
-    footskip=0pt,
-    headsep=10pt,
-    ]{geometry}
+   top=1.5cm, 
+   bottom=0.6cm, 
+   hmargin=1cm,
+   footskip=4.40004pt,
+   headsep=10pt,
+   ]{geometry}
 \usepackage[graph]{dmlb}
-\nonstopmode%
+% \nonstopmode%
 % CONSTS ==============================
-   \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES; PREFERABLY NOT SAME AS .TEX FILE FOLDER
-   \edef\mya{4}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
-   \edef\myb{9}% BEGIN Y-AXIS TICK SCALING FROM \MYB
+   \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES
+   \edef\mya{3}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
+   \edef\myb{8}% BEGIN Y-AXIS TICK SCALING FROM \MYB
+   \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
+   \edef\myd{28}% DAYS PER GRAPH
 % COLORS ==============================
-    % COMMENT OUT SECTION FOR DEFAULT COLOR SCHEME
-    % ROWS
-    \definecolor{oddRowColor}{RGB}{55,24,34}
-    \definecolor{evenRowColor}{RGB}{28,19,23}
-    % TEXT
-    \colorlet{oddRowTextColor}{-oddRowColor}
-    \colorlet{evenRowTextColor}{-evenRowColor}
-    % TABLE
-    \definecolor{tableColor}{RGB}{180,232,252}
-    % HEADER/FOOTER
-    \colorlet{headerColor}{green!55}
-    % PAGE BACKGROUND
-    \definecolor{pageBG}{RGB}{29,25,32}
-    \pagecolor{pageBG}
-    % GRAPH CURVE AND GRID
-    \colorlet{curveColor}{pink}
+   % COMMENT OUT SECTION FOR DEFAULT COLOR SCHEME
+   % ROWS
+   \definecolor{oddRowColor}{RGB}{55,24,34}
+   \definecolor{evenRowColor}{RGB}{28,19,23}
+   % TEXT
+   \colorlet{oddRowTextColor}{-oddRowColor}
+   \colorlet{evenRowTextColor}{-evenRowColor}
+   % TABLE
+   \definecolor{tableColor}{RGB}{180,232,252}
+   % HEADER/FOOTER
+   \colorlet{headerColor}{green!55}
+   % PAGE BACKGROUND
+   \definecolor{pageBG}{RGB}{29,25,32}
+   \pagecolor{pageBG}
+   % GRAPH CURVE
+   \colorlet{curveColor}{pink!80!black}
 \begin{document}
 \end{document}
 xelatex -shell-escape graphmedaddy.tex

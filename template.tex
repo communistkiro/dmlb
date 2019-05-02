@@ -29,7 +29,9 @@
     % PAGE BACKGROUND
     \definecolor{pageBG}{RGB}{29,25,32}
     \pagecolor{pageBG}
-    % CAPTION TEXT
+    % GRAPH CURVE
+    \colorlet{curveColor}{pink!85!black}
+    % CAPTION TEXT AND FORMAT
     % \DeclareCaptionFormat{myformat}{{\rmfamily\small\textsc{#1}#2{#3}}}% default
     \DeclareCaptionFont{cc}{\color{pink}}
     \captionsetup{format={myformat},labelsep={period},font+={cc}}
@@ -43,6 +45,7 @@
     \tograph{2000-01-26}{2000-02-12}%
     \tograph{2016-02-02}{2016-03-10}%
     \tograph{2016-03-10}{2016-04-05}%
+    \tograph{1423-12-24}{1424-01-14}%
     % \tograph{2236-12-24}{2237-01-24}%
     % \tograph{2237-01-24}{2237-02-12}%
     % \tograph{2666-05-05}{2666-06-24}%
@@ -79,9 +82,9 @@
     % FOOTER
         \hline\endfoot%
     \showrowcolors%
-\dmlbSetDate{1999}{12}{21}%
+\dmlbsetdate{1999}{12}{21}%
 \input{./QQ/TEST}% 2000 IS NOT A TRUE LEAP YEAR BECAUSE DIVISIBLE BY 400
-\dmlbSetDate{2016}{2}{1}%
+\dmlbsetdate{2016}{2}{1}%
 \input{./QQ/TEST}%
 % 01.02.19
     \QQQ{00:35}{ }{3}{5}{22}{45}{}%
@@ -262,10 +265,10 @@
     \QQQ{13:41}{10.0}{9}{ }{ }{ }{}%
     \QQQ{14:28}{5.5}{ }{3.2}{44}{70}{}%
     \QQQ{15:48}{2.3}{ }{ }{ }{ }{}%
-    \QQQ{18:37}{1.5}{ }{9}{ }{ }{Hey.\hyperref[2000-01-07]{link to first entry of 2000-01-07}}*%
-% \dmlbSetDate{1423}{12}{24}%
-% \input{./QQ/TEST}%
-% \dmlbSetDate{6}{5}{5}%
+    \QQQ{18:37}{1.5}{ }{9}{ }{ }{Hey, \hyperref[2000-01-07]{this} is a link to first entry of 2000-01-07.}*%
+\dmlbsetdate{1423}{12}{24}%
+\input{./QQ/TEST}%
+\shape
 % \input{./QQ/TEST}%
 \end{longtable}
 \end{document}
