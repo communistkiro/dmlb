@@ -2,18 +2,17 @@
 \usepackage[
    top=1.5cm, 
    bottom=0.6cm, 
-   hmargin=1cm,
+   hmargin=1cm,% FIXME multi-row single-entry date misaligned if greater
    footskip=4.40004pt,
    headsep=10pt,
    ]{geometry}
 \usepackage[graph]{dmlb}
-% \nonstopmode%
+\nonstopmode%
 % CONSTS ==============================
    \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES
    \edef\mya{3}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
    \edef\myb{8}% BEGIN Y-AXIS TICK SCALING FROM \MYB
-   \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
-   \edef\myd{28}% DAYS PER GRAPH
+   % \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
 % COLORS ==============================
    % COMMENT OUT SECTION FOR DEFAULT COLOR SCHEME
    % ROWS
