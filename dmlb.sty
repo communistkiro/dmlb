@@ -28,10 +28,11 @@
       pdfauthor={},                   % author
       pdfnewwindow=true,              % links in new PDF window
       colorlinks=false,               % false: boxed links; true: colored links
-      linkcolor=cyan,                  % color of internal links (change box color with linkbordercolor)
+      linkcolor=red,                  % color of internal links (change box color with linkbordercolor)
       citecolor=green,                % color of links to bibliography
       filecolor=magenta,              % color of file links
       urlcolor=cyan,                  % color of external links
+      linkbordercolor=cyan,
       % hidelinks=false
    ]{hyperref}
    \RequirePackage{bookmark}
@@ -104,7 +105,7 @@
             grid=both,%
             every minor grid/.append style={line width=0.25pt},%
             every extra y tick/.style={grid=minor},%
-            % enlarge x limits=0.003,% FIXME- decide
+            % enlarge x limits=0.003,%
             enlarge y limits=auto,%
             colormap={mycm}{%
                color(1)=(blue!70),%
@@ -123,26 +124,27 @@
             %
             % \pgfplotsset{%
             %    FUCK/.code={%
-            %       \edef\tmpa{}%
+            %       \xdef\tmpa{}%
             %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
             %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
-            %          {\pgfmathparse{\myb+\x*\mya/\myc}\xdef\tmpa{\tmpa\pgfmathresult,} }%
-            %       \edef\tmpa{\tmpa30.0}%
+            %          {\pgfmathparse{\myb+\x*\mya/\myc}\xdef\tmpa{\tmpa\pgfmathresult,}}%
+            %       \xdef\tmpa{\tmpa30.0}%
             %       \pgfplotsset{extra y ticks={\tmpa}}%
-            %    }%
+            %    },%
             % }%
             %
             % \pgfplotsset{%
-            %    FUCK/.code={%
-            %       \pgfplotsset{extra y ticks={%
+            %    FUCK/.code={\pgfplotsset{%
+            %       extra y ticks={%
             %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
-            %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
+            %       \pgfplotsforeachungrouped \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
             %          {\pgfmathparse{\myb+\x*\mya/\myc}\pgfmathresult,}%
             %       30.0%
-            %       }}%
+            %       },%
+            %       }%
             %    }%
-            % }%
-            %
+            % }%          
+            % extra y ticks={9,10,12,13,15,16,18,19,21},%
             every tick/.style={line width=0pt},% every tick/.style={very thin,color={rgb,255:red,29;green,25;blue,32}},%
             axis y line=left,%
             % yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},% default
@@ -151,16 +153,26 @@
                   \color{red}%
                \fi
                \pgfmathprintnumber{\tick}%
-               % \ifnum\pgfmathresult=11
+               % \ifnum\pgfmathresult=9
+               % \else
+               % \ifnum\pgfmathresult=10
+               % \else
+               % \ifnum\pgfmathresult=12
+               % \else
+               % \ifnum\pgfmathresult=13
                % \else
                % \ifnum\pgfmathresult=15
                % \else
+               % \ifnum\pgfmathresult=16
+               % \else
+               % \ifnum\pgfmathresult=18
+               % \else
                % \ifnum\pgfmathresult=19
                % \else
+               % \ifnum\pgfmathresult=21
+               % \else
                %    \pgfmathprintnumber{\tick}%
-               % \fi
-               % \fi
-               % \fi
+               % \fi\fi\fi\fi\fi\fi\fi\fi\fi%
             },%
             xticklabel={\day.},% xticklabel={\month.\day.},%
             ylabel style={%
@@ -629,7 +641,7 @@
 
 FIXME'S
    - !!! dmlbsetdate and autefileinput overhaul- make single file input possible? make other other format (not seq. chron. yy-mm) possible
-   - pgfplots/extra xyz ticks={} doesn't accept an edef'd macro that expands correctly as an arg--- fucking why
+   - pgfplots/extra xyz ticks={} doesn't accept an edef'd macro that expands correctly as an arg--- fucking why - doesn't accept anything...
    - if above gets fixed somefuckinghow- read off all values and surpress tick label manifestation
    - how to branch loading packages? i.e., not load pgf and pgfplots for non-graph use
 
