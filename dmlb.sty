@@ -1,4 +1,4 @@
-\ProvidesPackage{dmlb}[2018/05/05 a tryhard logbook for diabetes]
+\ProvidesPackage{dmlb}[2018/05/12 a tryhard logbook for diabetes]
 \NeedsTeXFormat{LaTeX2e}
 % PACKAGES  ===========================
    \RequirePackage{
@@ -27,15 +27,15 @@
       pdftitle={Diabetes Logbook},    % title
       pdfauthor={},                   % author
       pdfnewwindow=true,              % links in new PDF window
-      colorlinks=false,               % false: boxed links; true: colored links
-      linkcolor=red,                  % color of internal links (change box color with linkbordercolor)
+      colorlinks=true,               % false: boxed links; true: colored links
+      linkcolor=magenta,                  % color of internal links (change box color with linkbordercolor)
       citecolor=green,                % color of links to bibliography
       filecolor=magenta,              % color of file links
       urlcolor=cyan,                  % color of external links
       linkbordercolor=cyan,
       % hidelinks=false
    ]{hyperref}
-   \RequirePackage{bookmark}
+   \RequirePackage{bookmark}% fixme- configure?
 
    \ExplSyntaxOn
    \sys_if_engine_pdftex:T {
@@ -190,6 +190,8 @@
       \AtEndDocument{%
          % \tikzset{external/force remake}%
          \centering%
+         \setcounter{dmlb@dataSet}{0}%
+         \clearpage%
          % \pgfplotsset{FUCK}%
          \dmlb@graph%
       }%
@@ -244,9 +246,11 @@
    \ifnum\Year=#1
       \ifnum\Month=#2
          \global\Day #3\relax%
+         \dmlb@rowlabel{\dmlb@Date}%
       \else
          \global\Month #2\relax%
          \global\Day #3\relax%
+         \dmlb@rowlabel{\dmlb@Date}%
          \pdfbookmark[1]{\monthn@me}{\dmlb@Date}%
       \fi
    \else
@@ -265,6 +269,7 @@
       \fi
       \global\Month #2\relax%
       \global\Day #3\relax%
+      \dmlb@rowlabel{\dmlb@Date}%
       \pdfbookmark{\the\Year}{\dmlb@Date}%
       \pdfbookmark[1]{\monthn@me}{\dmlb@Date}%
    \fi
@@ -527,14 +532,13 @@
 }
 
 \newcommand{\dmlb@graph}{%
-   \newread\periods
+   \newread\periods%
    \openin\periods=\myRelPath0.dat%
    \read\periods to \dmlb@iDate%
    \ifeof\periods
    \else
-      \setcounter{dmlb@dataSet}{0}%
-      \refstepcounter{dmlb@dataSet}%
-      \pdfbookmark[0]{Graphs}{gr:0}%
+      % \pdfbookmark[0]{Graphs}{gr:0}%
+      \pdfbookmark[0]{\myd-day graphs}{gr:0}%
       \StrLeft{\dmlb@iDate}{4}[\iY]%
       \edef\fY{0}%
       \dmlb@graphmedaddy%
@@ -543,7 +547,7 @@
 }
 
 \newcommand{\dmlb@graphmedaddy}{%
-   % \refstepcounter{dmlb@dataSet}%
+   \refstepcounter{dmlb@dataSet}%
    \read\periods to \dmlb@fDate%
    \IfFileExists{\myRelPath\thedmlb@dataSet.dat}{%
       \tikzsetnextfilename{\thedmlb@dataSet}%
@@ -558,7 +562,8 @@
             \edef\liY{\iY}%
          \fi
       \fi   
-      \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
+      % \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
+      \pdfbookmark[2]{\dmlb@iDate}{gr:\thedmlb@dataSet}%
       \begin{tikzpicture}%
       \begin{axis}[%
          % \dmlb@grOpts,% fixme- this or the default, ifcsundef? 
@@ -567,7 +572,7 @@
          ylabel={\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}},% KERNS TO NEGATE TRIALING SPACE FROM \READ
       ]%
          \addplot[scatter, sharp plot, color=curveColor] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};%
-      %    % \addplot[\dmlb@grOpts] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
+      %  % \addplot[\dmlb@grOpts] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
       \end{axis}%
       \end{tikzpicture}%
    }%
@@ -577,7 +582,6 @@
       % DONT REPEAT
    \else
       \fixme% single space to avoid graph concatenation, but why
-      \refstepcounter{dmlb@dataSet}%
       \StrLeft{\dmlb@iDate}{4}[\iY]%
       \dmlb@graphmedaddy%
    \fi

@@ -8,6 +8,8 @@
    ]{geometry}
 \usepackage[graph]{dmlb}
 % \usepackage{dmlb}
+   \usepackage{silence}
+   \WarningsOff[latex]
 % CONSTS ==============================
    \edef\mym{11cm}% THE WIDTH OF THE M COLUMN (WITH UNIT!)
    \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES;
@@ -36,10 +38,8 @@
    % \DeclareCaptionFormat{myformat}{{\rmfamily\small\textsc{#1}#2{#3}}}% default
    \DeclareCaptionFont{cc}{\color{pink}}
    \captionsetup{format={myformat},labelsep={period},font+={cc}}
-   \usepackage{silence}
-   \WarningsOff[latex]
 \begin{document}
-% OPTIONAL CALENDAR WITH LINKS TO EACH DAY WITH ENTRIES; ENTER STARTING DATE OR COMMENT OUT; RERUN IF NOT ALL DATES HAVE LINKS
+% % OPTIONAL CALENDAR WITH LINKS TO EACH DAY WITH ENTRIES; ENTER STARTING DATE OR COMMENT OUT; RERUN IF NOT ALL DATES HAVE LINKS
 \pdfbookmark[0]{Calendar}{cal}
 \tikzexternaldisable%
 {%
@@ -48,15 +48,15 @@
    {% 
       \ifdate{equals=\pgfcalendarbeginiso}%
       {%
-         {\normalsize\bfseries\hrulefill\%y0}\par\vspace*{1.3pt}{\bfseries\%m0\hspace{1.6cm}}%
+         {\normalsize\bfseries\hrulefill\%y0}\par\vspace{1.3pt}{\bfseries\%m0\hspace{1.6cm}}%
       }%
       {%
          \ifdate{equals=01-01}{{\par\normalsize\bfseries\hrulefill\%y0}}{}%
-         \ifdate{end of month=0}{\par\vspace*{1.3pt}{\bfseries\%m0}\hspace{1.6cm}}{}%
-         % \%d0\hspace*{4.8pt}%
+         \ifdate{end of month=0}{\par\vspace{1.3pt}{\bfseries\%m0}\hspace{1.6cm}}{}%
+         % \%d0\hspace{4.8pt}%
       }%
       \pgfcalendarjuliantodate{\pgfcalendarcurrentjulian}{\iY}{\iM}{\iD}%
-      \hyperref[\iY-\iM-\iD]{\%d0}\hspace*{4.8pt}%
+      \hyperref[\iY-\iM-\iD]{\%d0}\hspace{4.8pt}%
    }%
 }%
 \tikzexternalenable%
@@ -138,23 +138,24 @@
    \QQQ{01:54}{9.3}{6}{ }{ }{ }{}%
    \QQQ{04:52}{ }{5}{ }{ }{ }{}%
 % 07.02.06
-   \QQQ{07:48}{3.3}{ }{ }{ }{ }{}%
-   \QQQ{10:42}{ }{ }{2.2}{54}{90}{}%
-   \QQQ{11:12}{ }{5}{5.2}{10}{100}{}%
-   \QQQ{12:22}{ }{7}{13}{50}{100}{}%
-   \QQQ{22:08}{9.9}{7}{ }{ }{ }{}*%
-   \QQQ{00:12}{8.5}{8}{ }{ }{ }{}%
-   \QQQ{00:53}{ }{ }{ }{68}{100}{}%
-   \QQQ{05:03}{10.9}{13}{ }{ }{ }{}%
+   % \QQQ{07:48}{3.3}{ }{ }{ }{ }{}%
+   % \QQQ{10:42}{ }{ }{2.2}{54}{90}{}%
+   % \QQQ{11:12}{ }{5}{5.2}{10}{100}{}%
+   % \QQQ{12:22}{ }{7}{13}{50}{100}{}%
+   % \QQQ{22:08}{9.9}{7}{ }{ }{ }{}%
+   % \QQQ{00:12}{8.5}{8}{ }{ }{ }{}%
+   % \QQQ{00:53}{ }{ }{ }{68}{100}{}%
+   % \QQQ{05:03}{10.9}{13}{ }{ }{ }{}%
 % 08.02.06
-   \QQQ{10:08}{8.8}{7}{ }{ }{ }{}%
-   \QQQ{15:55}{7.9}{7}{ }{30}{24}{}*%
-   \QQQ{00:30}{6.3}{3}{ }{ }{ }{}%
-   \QQQ{02:22}{ }{ }{ }{40}{40}{}%
-   \QQQ{03:13}{6.5}{3}{ }{ }{ }{}%
-   \QQQ{05:25}{10.8}{12}{ }{ }{ }{}%
+   % \QQQ{10:08}{8.8}{7}{ }{ }{ }{}%
+   % \QQQ{15:55}{7.9}{7}{ }{30}{24}{}%
+   % \QQQ{00:30}{6.3}{3}{ }{ }{ }{}%
+   % \QQQ{02:22}{ }{ }{ }{40}{40}{}%
+   % \QQQ{03:13}{6.5}{3}{ }{ }{ }{}%
+   % \QQQ{05:25}{10.8}{12}{ }{ }{ }{}%
 % 09.02.06
-   \QQQ{13:04}{8.6}{6}{ }{ }{ }{}%
+   \dmlbsetdate{2006}{2}{9}%  
+   \QQQ{13:04}{8.6}{6}{ }{ }{ }{example of skipping two days}%
    \QQQ{15:59}{6.4}{2}{ }{ }{ }{}%
    \QQQ{20:07}{9.2}{7}{ }{ }{ }{}%
    \QQQ{21:49}{ }{ }{ }{ }{ }{}*%
@@ -178,7 +179,7 @@
    \QQQ{15:40}{4.0}{ }{ }{ }{38}{}%
    \QQQ{16:23}{ }{3}{4}{8}{80}{}%
    \QQQ{23:04}{ }{ }{1}{2}{20}{}%
-   \QQQ{23:24}{ }{ }{ }{ }{ }{}*%
+   \QQQ{23:24}{ }{ }{ }{ }{ }{}%
 % 13.02.06
    \QQQ{07:53}{1.6}{ }{2}{ }{ }{}%
    \QQQ{10:30}{ }{ }{1.5}{ }{ }{}%
@@ -186,7 +187,7 @@
    \QQQ{16:22}{2.1}{ }{3}{ }{ }{}%
    \QQQ{18:13}{ }{ }{3}{ }{ }{}%
    \QQQ{18:55}{5.1}{ }{3}{60}{110}{}%
-   \QQQ{19:xx}{ }{ }{5}{10}{100}{}%
+   \QQQ{19:30}{ }{ }{5}{10}{100}{}%
    \QQQ{20:45}{ }{ }{ }{ }{ }{}*%
 % 14.02.06
    \QQQ{05:03}{5.5}{ }{ }{ }{ }{}%
@@ -240,7 +241,7 @@
    \QQQ{13:14}{4.1}{ }{ }{ }{ }{}%
    \QQQ{15:14}{ }{2}{ }{ }{ }{}%
    \QQQ{19:54}{5.1}{ }{ }{ }{ }{}*%
-   \QQQ{00:xx}{ }{ }{ }{55}{70}{}%
+   \QQQ{00:45}{ }{ }{ }{55}{70}{}%
    \QQQ{01:11}{5.3}{ }{ }{ }{ }{}%
 % 20.02.06
    \QQQ{04:16}{7.6}{5}{ }{ }{ }{}%
@@ -272,6 +273,6 @@
    \QQQ{13:41}{10.0}{9}{ }{ }{ }{}%
    \QQQ{14:28}{5.5}{ }{3.2}{44}{70}{}%
    \QQQ{15:48}{2.3}{ }{ }{ }{ }{}%
-   \QQQ{18:37}{1.5}{ }{9}{ }{ }{Hey, \hyperref[2000-01-07]{this} is a link to first entry of 2000-01-07.}*%
+   \QQQ{18:37}{1.5}{ }{9}{ }{ }{Hey, \hyperref[2000-01-07]{this} is a link to first entry of 2000-01-07.}%
 \end{longtable}
 \end{document}
