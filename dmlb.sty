@@ -46,7 +46,7 @@
       \RequirePackage{polyglossia}
          \setdefaultlanguage{english}
       \RequirePackage{fontspec}
-         \setmainfont{XCharter}[Ligatures=TeX]% XCharter, CrimsonPro
+         \setmainfont{XCharter}[Ligatures=TeX]% XCharter, Crimson
          \setsansfont{Century Gothic}[Ligatures=TeX]% cabin
    }
    \ExplSyntaxOff
@@ -120,7 +120,14 @@
             date coordinates in=x,%
             xtick distance=1,% 1 DAY
             ytick distance=1,% 1 mM
+            xmin={\dmlb@iDate 00:00},%
+            xmax={\dmlb@fDate 00:00},%
             ymin=1,%
+            ylabel={\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}},%
+            ylabel style={%
+               font={\large},%
+               yshift={-\textwidth+0.4cm},%
+            },%
             %
             % \pgfplotsset{%
             %    FUCK/.code={%
@@ -175,14 +182,11 @@
                % \fi\fi\fi\fi\fi\fi\fi\fi\fi%
             },%
             xticklabel={\day.},% xticklabel={\month.\day.},%
-            ylabel style={%
-               font={\large},%
-               yshift={-\textwidth+0.4cm},% 
-            },%
             table/col sep=comma,%
          }%
          \usetikzlibrary{external}%
          \tikzexternalize[%
+            % force remake=true,%
             prefix=\myRelPath,%
             verbose=false,%
          ]%
@@ -198,7 +202,6 @@
    }
 
    \DeclareOption*{}
-
    \ProcessOptions\relax
 % COUNTERS ============================
    % SWITCHES FOR ROW/DATE BG AND TEXT COLORS
@@ -227,7 +230,7 @@
    \newcount\tmpa
    \newcount\tmpb
 % COMMANDS ============================
-\newcommand{\autoFileInput}[1]{% RELATIVE PATHFILE AS ARG
+\newcommand{\autoFileInput}[1]{% RELATIVE PATHFILE AS ARG; INPUTS `yy-mm.tex` files
    \IfFileExists{#1\TwoDigits{\the\tmpa}-\TwoDigits{\the\tmpb}}%
    {%
       \input{#1\TwoDigits{\the\tmpa}-\TwoDigits{\the\tmpb}}%
@@ -537,8 +540,8 @@
    \read\periods to \dmlb@iDate%
    \ifeof\periods
    \else
-      % \pdfbookmark[0]{Graphs}{gr:0}%
-      \pdfbookmark[0]{\myd-day graphs}{gr:0}%
+      \pdfbookmark[0]{Graphs}{gr:0}%
+      % \pdfbookmark[0]{\myd-day graphs}{gr:0}% fugly
       \StrLeft{\dmlb@iDate}{4}[\iY]%
       \edef\fY{0}%
       \dmlb@graphmedaddy%
@@ -562,26 +565,23 @@
             \edef\liY{\iY}%
          \fi
       \fi   
-      % \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
       \pdfbookmark[2]{\dmlb@iDate}{gr:\thedmlb@dataSet}%
       \begin{tikzpicture}%
       \begin{axis}[%
-         % \dmlb@grOpts,% fixme- this or the default, ifcsundef? 
-         xmin=\dmlb@iDate 00:00,%
-         xmax=\dmlb@fDate 00:00,%
-         ylabel={\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}},% KERNS TO NEGATE TRIALING SPACE FROM \READ
+         %% \dmlb@grOpts,% FIXME- this or the default, ifcsundef?
       ]%
-         \addplot[scatter, sharp plot, color=curveColor] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};%
+         \addplot[scatter, smooth, color=curveColor] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};%
       %  % \addplot[\dmlb@grOpts] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
       \end{axis}%
       \end{tikzpicture}%
+      % \pdfbookmark[2]{\dmlb@iDate-- \dmlb@fDate}{gr:\thedmlb@dataSet}%
    }%
    {}%
    \read\periods to \dmlb@iDate%
    \ifeof\periods
       % DONT REPEAT
    \else
-      \fixme% single space to avoid graph concatenation, but why
+      \par\vfill% graph concatenation prevention
       \StrLeft{\dmlb@iDate}{4}[\iY]%
       \dmlb@graphmedaddy%
    \fi

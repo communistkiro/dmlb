@@ -12,8 +12,8 @@
    \edef\myRelPath{./graphs/}% RELATIVE PATH FOR AUXILIARY FILES
    \edef\mya{3}% Y-AXIS SCALE COMPRESSION FACTOR AFTER \MYB
    \edef\myb{8}% BEGIN Y-AXIS TICK SCALING FROM \MYB
-   % \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
-   \edef\myd{28}% DAYS PER GRAPH; TO NEGATE WARNINGS; DOESN'T MATTER IF COMMENTED OUT
+   %% \edef\myc{3}% ADDITIONAL EQUIDISTANT GRID LINES AFTER \MYB + 1, I.E., 1 -> NO EXTRA
+   \edef\myd{20}% DAYS PER GRAPH; TO NEGATE WARNINGS; DOESN'T MATTER IF COMMENTED OUT
 % COLORS ==============================
    % COMMENT OUT SECTION FOR DEFAULT COLOR SCHEME
    % ROWS
@@ -33,4 +33,9 @@
    \colorlet{curveColor}{pink!80!black}
 \begin{document}
 \end{document}
+xelatex doesn't work for graphmedaddy bc. they fucked it up...
+https://github.com/pgf-tikz/pgf/commit/943a0a0c82ca6e9c3a3f730863178d7744e601d6
+
 xelatex -shell-escape graphmedaddy.tex
+
+pdflatex -shell-escape graphmedaddy.tex
