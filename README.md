@@ -24,6 +24,8 @@ Mostly everything is commented in `dmlb.sty`, `template.tex`,and `graphmedaddy.t
   - delete any previous pdfs of same name, if the graph period or the data have changed (or uncomment `force remake` in the .sty); rebuild main w/ `[graph]` option. As long as the .pdfs are to be found they'll get inserted;
   - labels for each next day, i.e., before the actual entry, and pdfbookmarks for all years, months, and graphs- anchors being `yyyy-mm-dd` resp. `gr:#`, starting from 1;
 
+If you need troubleshooting help, email me.
+
 ## examples
 not full up to date, still mostly representative
 [".tex commented out"](../blob/master/templateGRAY.pdf)
