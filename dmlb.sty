@@ -1,4 +1,4 @@
-\ProvidesPackage{dmlb}[2018/05/12 a tryhard logbook for diabetes]
+\ProvidesPackage{dmlb}[2018/07/22 a tryhard logbook for diabetes]
 \NeedsTeXFormat{LaTeX2e}
 % PACKAGES  ===========================
    \RequirePackage{
@@ -17,25 +17,26 @@
    \RequirePackage[table]{xcolor}
    \RequirePackage[
       unicode=true,
-      bookmarks=true,                 % show bookmarks bar?
-      bookmarksopen=false,            % expand bookmark tree
-      unicode=true,                   % non-Latin characters in pdfviewer's bookmarks
-      pdftoolbar=true,                % show pdfviewer's toolbar?
-      pdfmenubar=true,                % show pdfviewer's menu?
-      pdffitwindow=false,             % window fit to page when opened
-      pdfstartview={FitH},            % fits the width of the page to the window
-      pdftitle={Diabetes Logbook},    % title
-      pdfauthor={},                   % author
-      pdfnewwindow=true,              % links in new PDF window
-      colorlinks=true,               % false: boxed links; true: colored links
-      linkcolor=magenta,                  % color of internal links (change box color with linkbordercolor)
-      citecolor=green,                % color of links to bibliography
-      filecolor=magenta,              % color of file links
-      urlcolor=cyan,                  % color of external links
+      bookmarks=true,
+      bookmarksopen=false,
+      unicode=true,
+      pdftoolbar=true,
+      pdfmenubar=true,
+      pdffitwindow=false,
+      pdfstartview={FitH},
+      pdftitle={Diabetes Logbook},
+      pdfauthor={},
+      pdfnewwindow=true,
+      colorlinks=true,
+      linkcolor=magenta,
+      citecolor=green,
+      filecolor=magenta,
+      urlcolor=cyan,
       linkbordercolor=cyan,
-      % hidelinks=false
+     %hidelinks=false,
    ]{hyperref}
    \RequirePackage{bookmark}% fixme- configure?
+   \RequirePackage[xspace]{ellipsis}
 
    \ExplSyntaxOn
    \sys_if_engine_pdftex:T {
@@ -46,8 +47,19 @@
       \RequirePackage{polyglossia}
          \setdefaultlanguage{english}
       \RequirePackage{fontspec}
-         \setmainfont{XCharter}[Ligatures=TeX]% XCharter, Crimson
-         \setsansfont{Century Gothic}[Ligatures=TeX]% cabin
+         \setmainfont{lmroman10}[
+            Extension = .otf,
+            UprightFont= *-regular,
+            BoldFont= *-bold,
+            ItalicFont= *-italic,
+            BoldItalicFont= *-bolditalic,
+          ]%
+         \setsansfont{lmmono}[
+            Extension = .otf,
+            UprightFont= *10-regular,
+            BoldFont= *lt10-bold,
+            ItalicFont= *10-italic,
+          ]%
    }
    \ExplSyntaxOff
 % OPTIONS =============================
@@ -84,7 +96,7 @@
       \rowcolors{0}{evenRowColor}{oddRowColor}%
       \color{tableColor}%
       \sffamily%
-      \footnotesize%
+      \footnotesize% ~7--8pt
       \changestrut%
       \calcmaxrows%
    }%
@@ -105,7 +117,7 @@
             grid=both,%
             every minor grid/.append style={line width=0.25pt},%
             every extra y tick/.style={grid=minor},%
-            % enlarge x limits=0.003,%
+           %enlarge x limits=0.003,%
             enlarge y limits=auto,%
             colormap={mycm}{%
                color(1)=(blue!70),%
@@ -123,80 +135,80 @@
             xmin={\dmlb@iDate 00:00},%
             xmax={\dmlb@fDate 00:00},%
             ymin=1,%
-            ylabel={\dmlb@iDate{\kern-0.2em}--\dmlb@fDate{\kern-0.2em}},%
+            ylabel={\dmlb@iDate{\kern-0.4em}---\dmlb@fDate},%
             ylabel style={%
                font={\large},%
                yshift={-\textwidth+0.4cm},%
             },%
-            %
-            % \pgfplotsset{%
-            %    FUCK/.code={%
-            %       \xdef\tmpa{}%
-            %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
-            %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
-            %          {\pgfmathparse{\myb+\x*\mya/\myc}\xdef\tmpa{\tmpa\pgfmathresult,}}%
-            %       \xdef\tmpa{\tmpa30.0}%
-            %       \pgfplotsset{extra y ticks={\tmpa}}%
-            %    },%
-            % }%
-            %
-            % \pgfplotsset{%
-            %    FUCK/.code={\pgfplotsset{%
-            %       extra y ticks={%
-            %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
-            %       \pgfplotsforeachungrouped \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
-            %          {\pgfmathparse{\myb+\x*\mya/\myc}\pgfmathresult,}%
-            %       30.0%
-            %       },%
-            %       }%
-            %    }%
-            % }%          
-            % extra y ticks={9,10,12,13,15,16,18,19,21},%
+           %
+           % \pgfplotsset{%
+           %    FUCK/.code={%
+           %       \xdef\tmpa{}%
+           %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
+           %       \foreach \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
+           %          {\pgfmathparse{\myb+\x*\mya/\myc}\xdef\tmpa{\tmpa\pgfmathresult,}}%
+           %       \xdef\tmpa{\tmpa30.0}%
+           %       \pgfplotsset{extra y ticks={\tmpa}}%
+           %    },%
+           % }%
+           %
+           % \pgfplotsset{%
+           %    FUCK/.code={\pgfplotsset{%
+           %       extra y ticks={%
+           %       \pgfmathparse{int((22-\myb)*\myc/\mya)}%
+           %       \pgfplotsforeachungrouped \x in {1,...,\pgfmathresult}% \foreach \pgfplotsforeachungrouped 
+           %          {\pgfmathparse{\myb+\x*\mya/\myc}\pgfmathresult,}%
+           %       30.0%
+           %       },%
+           %       }%
+           %    }%
+           % }%          
+           % extra y ticks={9,10,12,13,15,16,18,19,21},%
             every tick/.style={line width=0pt},% every tick/.style={very thin,color={rgb,255:red,29;green,25;blue,32}},%
             axis y line=left,%
-            % yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},% default
+           %yticklabel={\pgfmathparse{int(\tick)}\pgfmathprintnumber{\tick}},% default
             yticklabel={\pgfmathparse{int(\tick)}% which ticks show have a gridline but no number (overlapping)
                \ifnum\pgfmathresult=\myb
                   \color{red}%
                \fi
                \pgfmathprintnumber{\tick}%
-               % \ifnum\pgfmathresult=9
-               % \else
-               % \ifnum\pgfmathresult=10
-               % \else
-               % \ifnum\pgfmathresult=12
-               % \else
-               % \ifnum\pgfmathresult=13
-               % \else
-               % \ifnum\pgfmathresult=15
-               % \else
-               % \ifnum\pgfmathresult=16
-               % \else
-               % \ifnum\pgfmathresult=18
-               % \else
-               % \ifnum\pgfmathresult=19
-               % \else
-               % \ifnum\pgfmathresult=21
-               % \else
-               %    \pgfmathprintnumber{\tick}%
-               % \fi\fi\fi\fi\fi\fi\fi\fi\fi%
+              %\ifnum\pgfmathresult=9
+              %\else
+              %\ifnum\pgfmathresult=10
+              %\else
+              %\ifnum\pgfmathresult=12
+              %\else
+              %\ifnum\pgfmathresult=13
+              %\else
+              %\ifnum\pgfmathresult=15
+              %\else
+              %\ifnum\pgfmathresult=16
+              %\else
+              %\ifnum\pgfmathresult=18
+              %\else
+              %\ifnum\pgfmathresult=19
+              %\else
+              %\ifnum\pgfmathresult=21
+              %\else
+              %   \pgfmathprintnumber{\tick}%
+              %\fi\fi\fi\fi\fi\fi\fi\fi\fi%
             },%
             xticklabel={\day.},% xticklabel={\month.\day.},%
             table/col sep=comma,%
          }%
          \usetikzlibrary{external}%
          \tikzexternalize[%
-            % force remake=true,%
+           %force remake=true,%
             prefix=\myRelPath,%
             verbose=false,%
          ]%
       }%
       \AtEndDocument{%
-         % \tikzset{external/force remake}%
+        %\tikzset{external/force remake}%
          \centering%
          \setcounter{dmlb@dataSet}{0}%
          \clearpage%
-         % \pgfplotsset{FUCK}%
+        %\pgfplotsset{FUCK}%
          \dmlb@graph%
       }%
    }
@@ -277,8 +289,10 @@
       \pdfbookmark[1]{\monthn@me}{\dmlb@Date}%
    \fi
    %
-   \if\relax\detokenize{#4}\relax% FIXME- WORKS ONLY ONCE AND UP TO PRESENT DATE AND MUST BE USED ONLCE W/ GIVEN YY-MM FORMAT TO GENERATE .DAT'S
+   \if\relax\detokenize{#4}\relax% FIXME- WORKS ONLY ONCE AND UP TO PRESENT DATE AND MUST BE USED ONLY W/ GIVEN YY-MM FORMAT TO GENERATE .DAT'S
    \else
+      \immediate\newwrite\dataa%
+      \immediate\openout\dataa=\myRelPath666.csv%
       \immediate\newwrite\periods%
       \immediate\openout\periods=\myRelPath0.dat%
       \pgfcalendardatetojulian{\year-\month-\day}{\tmpa}
@@ -427,8 +441,7 @@
    {%
       \ifbool{dmlb@openDatFile}%
       {%
-         % \IfStrEq{\dmlb@Date\fixme}{\dmlb@fDate}% 100% time
-         \pgfcalendarifdate{\dmlb@Date}{at least=\dmlb@fDate}% 137% time
+         \pgfcalendarifdate{\dmlb@Date}{at least=\dmlb@fDate}%
          {%
             \immediate\closeout\data%
             \global\boolfalse{dmlb@openDatFile}%
@@ -439,8 +452,7 @@
          }%
       }%
       {%
-         % \IfStrEq{\dmlb@Date\fixme}{\dmlb@iDate}% 100% time
-         \pgfcalendarifdate{\dmlb@Date}{at least=\dmlb@iDate}% 137% time
+         \pgfcalendarifdate{\dmlb@Date}{at least=\dmlb@iDate}%
          {%
             \pgfcalendarifdate{\dmlb@Date}{at most=\dmlb@fDate}%
             {%
@@ -482,8 +494,8 @@
          \ifblank{#3}% FIXME- checking if #3 blank inside checkmedaddy would require definition here
             {}%
             {\immediate\write\data{\dmlb@Date\fixme#2, #3}}%
-         % % Data collection for spreadsheet
-         % \immediate\write\data{\dmlb@Date\fixme#2, #3, #4, #5, #6, #7}% , #8- expand within the write or before it somehow?
+         % csv of all fields
+         \immediate\write\dataa{\dmlb@Date\fixme#2, #3, #4, #5, #6, #7}%
       }}%
    \ifbool{dmlb@rc}%
       {\rowstyle{\color{evenRowTextColor}}\global\boolfalse{dmlb@rc}}%
@@ -491,14 +503,14 @@
    \ifbool{dmlb@rcc}%
       {\cellcolor{oddRowColor}}%
       {\cellcolor{evenRowColor}}%
-   #1% date
+   #1%  date
    #2&% time
    #3&% blood glucose
    #4&% insulin
    #5&% carbohydrates
    #6&% protein
    #7&% fat
-   #8% remarks
+   #8%  remarks
    \color{tableColor}%
    \\%
 }
@@ -540,8 +552,8 @@
    \read\periods to \dmlb@iDate%
    \ifeof\periods
    \else
-      \pdfbookmark[0]{Graphs}{gr:0}%
-      % \pdfbookmark[0]{\myd-day graphs}{gr:0}% fugly
+      % \pdfbookmark[0]{mydGraphs}{gr:0}%
+      \pdfbookmark[0]{\myd-day graphs}{gr:0}% fugly
       \StrLeft{\dmlb@iDate}{4}[\iY]%
       \edef\fY{0}%
       \dmlb@graphmedaddy%
@@ -569,7 +581,7 @@
       \begin{tikzpicture}%
       \begin{axis}[%
          %% \dmlb@grOpts,% FIXME- this or the default, ifcsundef?
-      ]%
+      ]% sharp plot, smooth, only marks
          \addplot[scatter, smooth, color=curveColor] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};%
       %  % \addplot[\dmlb@grOpts] table [header=false, x index=0, y index=1]{\myRelPath\thedmlb@dataSet.dat};% fixme- axis or plot options?
       \end{axis}%
@@ -612,7 +624,7 @@
 
 \newcommand{\TwoDigits}[1]{\ifnum#1<10 0#1\else#1\fi}% DOESN'T WORK AS ROBUST COMMAND
 
-\newcommand{\changestrut}{% VERTICAL ALIGNMENT OF TEXT WITHIN TABLE ROWS- EQUAL HEIGHT TO TOP AND BOTTOM \HLINE FROM A CAPITAL; TO BE USED ON ALL GLYPHS WITHOUT DESCENDERS OF USED FONT; thanks to Marcel Krüger from tex.stackexchange.com
+\newcommand{\changestrut}{% VERTICAL ALIGNMENT OF TEXT WITHIN TABLE ROWS- EQUAL HEIGHT TO TOP AND BOTTOM \HLINE FROM A CAPITAL; TO BE USED ON ALL GLYPHS WITHOUT DESCENDERS OF USED FONT; thanks to Marcel KrÃ¼ger from tex.stackexchange.com
    \setbox\strutbox\hbox{%
       \setbox0\hbox{ABCDEFGHJIKLMNOPQRSTUVWXYZabcdefhiklmnorstuvwxz.?!;:-1234567890}% 
       \skip0\dimexpr\baselineskip-\ht0-\dp0\relax%
@@ -643,9 +655,8 @@
 
 \endinput
 
-FIXME'S
-   - !!! dmlbsetdate and autefileinput overhaul- make single file input possible? make other other format (not seq. chron. yy-mm) possible
-   - pgfplots/extra xyz ticks={} doesn't accept an edef'd macro that expands correctly as an arg--- fucking why - doesn't accept anything...
-   - if above gets fixed somefuckinghow- read off all values and surpress tick label manifestation
-   - how to branch loading packages? i.e., not load pgf and pgfplots for non-graph use
-
+FIXME
+ - !!! dmlbsetdate and autefileinput overhaul- make single file input possible? make other other format (not seq. chron. yy-mm) possible
+ - pgfplots/extra xyz ticks={} doesn't accept an edef'd macro that expands correctly as an arg--- fucking why - doesn't accept anything...
+ - if above gets fixed somefuckinghow- read off all values and surpress tick label manifestation
+ - how to branch loading packages? i.e., not load pgf and pgfplots for non-graph use
